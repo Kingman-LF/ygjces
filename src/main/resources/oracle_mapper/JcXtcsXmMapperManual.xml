@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xwkj.ygjces.Mapper_oracle.JcXtcsXmMapperManual" >
+    <resultMap id="BaseMap" type="com.xwkj.ygjces.model.JcXtcsXm">
+        <id column="xm_id" property="xmId"></id>
+        <result column="xm_name" property="xmName"></result>
+        <result column="category_id" property="categoryId"></result>
+    </resultMap>
+
+    <resultMap id="jcXmCategoryMap" type="com.xwkj.ygjces.controller.vo.JcXmCategoryVo">
+        <id column="xm_id" property="categoryId"></id>
+        <result column="xm_name" property="categoryName"></result>
+        <result column="category_id" property="pid"></result>
+    </resultMap>
+
+    <select id="getjcXmList" resultMap="jcXmCategoryMap">
+      select K.xm_id ,K.xm_name,K.category_id from JC_XTCS_XM K
+      WHERE K.CATEGORY_ID IN (select t.category_id from JC_XTCS_XM_CATEGORY t start with t.category_id = '17cc22bedd344dbda6083c5fe5d27bc6' connect by prior t.category_id = t.pid)
+    </select>
+</mapper>

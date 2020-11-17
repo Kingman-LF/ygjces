@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css">
+		<link rel="stylesheet" href="./css/xadmin.css">
+        <script src="./lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="./js/xadmin.js"></script>
+        <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                                <div class="layui-inline layui-show-xs-block" id="shaixuan1">
+									<input type="text"  placeholder="请输入检测项名称" autocomplete="off" class="layui-input" id="xmName">
+								</div>
+								<div class="layui-inline layui-show-xs-block" id="shaixuan2">
+									<input type="text"  placeholder="请选择开始时间" autocomplete="off" class="layui-input" id="start">
+								</div>
+								<div class="layui-inline layui-show-xs-block" id="shaixuan3">
+									<input type="text"  placeholder="请选择结束时间" autocomplete="off" class="layui-input" id="end">
+								</div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <button type="button" class="layui-btn" id="sreach"><i class="layui-icon">&#xe615;</i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form" id="table" lay-filter='test'></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+	</body>
+	<script type="text/html" id="operation">
+		<div class="layui-btn-container">
+			<button class="layui-btn layui-btn-sm" lay-event="info">详情</button>
+		</div>
+	</script>
+    <script>
+		var data = [
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+			{id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'},
+            {id:1,name:'分类名称',number:"123456789",date:'2019-01-01',partyA:'甲方名称'}
+		]
+		function getData(params){
+
+			layui.use(['table','jquery','laydate','layer'], function(){
+				var table = layui.table,
+					$ = layui.jquery,
+					laydate = layui.laydate,
+					layer = layui.layer;
+
+				laydate.render({
+					elem: '#start',
+					value:params+"-01-01",
+					min:params+"-01-01",
+					max:params+"-12-31",
+//					done: function(value, date, endDate){
+//						console.log(value); //得到日期生成的值，如：2017-08-18
+//						console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+//						console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+//					}
+				});
+				laydate.render({
+					elem: '#end',
+					value:params+"-12-31",
+					min:params+"-01-01",
+					max:params+"-12-31",
+//					done: function(value, date, endDate){
+//						console.log(value); //得到日期生成的值，如：2017-08-18
+//						console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+//						console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+//					}
+				});
+				// var dom = ""
+				// var shaixuantiaojian = [{key:"number",tips:"请输入合同号"}]
+				// $(shaixuantiaojian).each(function(){
+					// dom+='<input type="text" name="username"  placeholder="'+this.tips+'" autocomplete="off" class="layui-input" id="'+this.key+'">'
+				// })
+				// $("#shaixuan").html(dom)
+				
+				table.render({
+					elem:"table",
+					id:"table",
+					height:"full-130",
+					page: true,
+//					data:data,
+                    url: 'getJcXtcsXmNameAndCount',
+                    method:"post",
+                    where:{
+                        defaultDate:params
+                    },
+					limit:10,
+					text:{
+                        none: "暂无相关数据!"
+                    },
+                    request: {
+                        pageName: 'pageNum',//页码的参数名称，默认：page
+                        limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                    },
+					cols:[
+					    [
+						{field: 'xmName', title: '检测项名'},
+						{field: 'xmCount', title: '检测量'}
+//						{title:'操作',templet:'#operation',width:100}
+					]
+                    ],
+                    response: {
+                        statusCode: 1 //重新规定成功的状态码为 200，table 组件默认为 0
+                    },
+                    parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                        return {
+                            "code": res.code, //解析接口状态
+                            "msg": res.msg, //解析提示文本
+                            "count": res.data.total, //解析数据长度
+                            "data": res.data.list //解析数据列表
+                        };
+                    }
+				})
+//				table.on('tool(test)',function(obj){
+//					if(obj.event=="info"){
+//						parent.typeInfo()
+//					}
+//				})
+				$("#sreach").on("click",function(){
+//					var data = {}
+//					$(shaixuantiaojian).each(function(){
+//						data[this.key] = $("#"+this.key).val()
+//					})
+					table.reload('table',{
+						where:{
+						    xmName:$("#xmName").val(),
+                            start:$("#start").val(),
+                            end:$("#end").val()
+                        }
+					})
+				})
+			});
+		}
+    </script>
+</html>

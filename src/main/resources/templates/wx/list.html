@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>检测项列表</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="css/weui.min.css" th:href="@{/css/weui.min.css}">
+    <link rel="stylesheet" href="css/jquery-weui.css" th:href="@{/css/jquery-weui.css}">
+    <link rel="stylesheet" href="css/demos.css" th:href="@{/css/demos.css}">
+    <style>
+        a{
+            color: #333333;
+        }
+        .weui-media-box__title span{
+            font-size: 12px;
+            margin-left: 10px;
+            padding: 3px 5px;
+            border-radius: 3px;
+            color: #ffffff;
+        }
+        .test_type{
+            background-color: #10aeff;
+        }
+        .weui-media-box__foot span{
+            font-size: 12px;
+            margin-right: 10px;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .normal{
+            color: #1AAD19;
+            border: 1px solid #1AAD19;
+        }
+        .overtime{
+            color: #f04643;
+            border: 1px solid #f04643;
+        }
+        .weui-media-box__foot{
+            margin-top: 5px;
+            color: #999;
+            text-align:right;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body ontouchstart>
+<input type="hidden" id="createTime" th:value="${noticeModel.createDate}">
+<input type="hidden" id="category" th:value="${noticeModel.category}">
+<input type="hidden" id="userid" th:value="${noticeModel.userid}">
+<input type="hidden" id="stage" th:value="${noticeModel.stage}">
+<div class="page__bd">
+    <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__hd">检测列表</div>
+        <div class="weui-panel__bd" th:each="model : ${list}">
+            <div class="weui-media-box weui-media-box_text">
+                <a href="" th:href="@{'/details?category='+${noticeModel.category}+'&id='+${model.pid}}">
+                    <h4 class="weui-media-box__title" th:if="${noticeModel.stage eq 1}">[[${model.syNum}]]<span class="test_type">试验</span></h4>
+                    <h4 class="weui-media-box__title" th:if="${noticeModel.stage eq 2}">[[${model.syNum}]]<span class="test_type">审批</span></h4>
+                    <h4 class="weui-media-box__title" th:if="${noticeModel.stage eq 3}">[[${model.syNum}]]<span class="test_type">批准</span></h4>
+                    <p class="weui-media-box__desc" th:text="${model.xmName}">某某单位 项目名</p>
+                    <p class="weui-media-box__foot" th:if="${noticeModel.category eq 1}"><span class="overtime">正常</span>[[${#dates.format(model.createDate, 'yyyy-MM-dd HH:mm')}]]</p>
+                    <p class="weui-media-box__foot" th:if="${noticeModel.category eq 2}"><span class="overtime">超时</span>[[${#dates.format(model.createDate, 'yyyy-MM-dd HH:mm')}]]</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+<script src="js/fastclick.js" th:src="@{/js/fastclick.js}"></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+<script src="js/jquery-weui.js" th:src="@{/js/jquery-weui.js}"></script>
+
+</body>
+</html>

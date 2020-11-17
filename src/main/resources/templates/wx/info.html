@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>检测项详情</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="css/weui.min.css" th:href="@{/css/weui.min.css}">
+    <link rel="stylesheet" href="css/jquery-weui.css" th:href="@{/css/jquery-weui.css}">
+    <link rel="stylesheet" href="css/demos.css" th:href="@{/css/demos.css}">
+</head>
+<body ontouchstar>
+<br>
+<div class="weui-form-preview">
+    <div class="weui-form-preview__bd">
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">委托单号</label>
+            <span class="weui-form-preview__value" th:text="${model.wtNum}"></span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">委托单位</label>
+            <span class="weui-form-preview__value" th:text="${model.wtUnit}"></span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">样品号</label>
+            <span class="weui-form-preview__value" th:text="${model.syNum}"></span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">项目名称</label>
+            <span class="weui-form-preview__value" th:text="${model.xmName}"></span>
+        </div>
+        <div class="weui-form-preview__item">
+            <label class="weui-form-preview__label">委托时间</label>
+            <span class="weui-form-preview__value" th:text="${#dates.format(model.wtDate, 'yyyy-MM-dd HH:mm')}"></span>
+        </div>
+        <div class="weui-form-preview__item" th:if=" ${category} == 1">
+            <label class="weui-form-preview__label">是否过期</label>
+            <span class="weui-form-preview__value">正常</span>
+        </div>
+        <div class="weui-form-preview__item" th:if=" ${category} == 2">
+            <label class="weui-form-preview__label">是否过期</label>
+            <span class="weui-form-preview__value">过期</span>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+<script src="js/fastclick.js" th:src="@{/js/fastclick.js}"></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+</script>
+<script src="js/jquery-weui.js" th:src="@{/js/jquery-weui.js}"></script>
+
+</body>
+</html>

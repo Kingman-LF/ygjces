@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css" th:href="@{/css/font.css}">
+        <link rel="stylesheet" href="./css/xadmin.css" th:href="@{/css/xadmin.css}">
+        <script type="text/javascript" src="./lib/layui/layui.js" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+        <script type="text/javascript" src="./js/xadmin.js" th:src="@{/js/xadmin.js}"></script>
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+        <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                                <input id="date" type="hidden">
+                                <div class="layui-inline layui-show-xs-block" id="shaixuan">
+									<input type="text"  placeholder="请输入委托单编号" autocomplete="off" class="layui-input" id="number" name="wtNum">
+								</div>
+								<div class="layui-inline layui-show-xs-block" id="startTime">
+									<input type="text"  placeholder="请选择开始时间" autocomplete="off" class="layui-input" id="start" name="startTime">
+								</div>
+								<div class="layui-inline layui-show-xs-block" id="endTime">
+									<input type="text"  placeholder="请选择结束时间" autocomplete="off" class="layui-input" id="end" name="endTime">
+								</div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <select name="jsStatus" id="jsStatus" class="layui-select">
+                                        <option value="">是否结算</option>
+                                        <option value="已结算">已结算</option>
+                                        <option value="未结算">未结算</option>
+                                    </select>
+                                </div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <select name="contractCode" id="contractCode" class="layui-select">
+                                        <option value="">有无合同</option>
+                                        <option value="1">有合同</option>
+                                        <option value="0">无合同</option>
+                                    </select>
+                                </div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <a type="button" class="layui-btn" id="sreach"><i class="layui-icon">&#xe615;</i></a>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form" id="table" lay-filter='test'></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+	</body>
+	<script type="text/html" id="operation">
+		<div class="layui-btn-container">
+			<button class="layui-btn layui-btn-sm" lay-event="info">检测项详情</button>
+		</div>
+	</script>
+    <script type="text/html" id="contractTpl">
+        if({{d.contractCode}}==null){无合同}else {有合同}
+    </script>
+    <script>
+        function getData(minDate,maxDate) {
+            $(function () {
+                layui.use(['table', 'jquery', 'laydate', 'layer', 'laytpl'], function () {
+                    var table = layui.table,
+                        $ = layui.jquery,
+                        laydate = layui.laydate,
+                        laytpl = layui.laytpl,
+                        layer = layui.layer;
+                    laydate.render({
+                        elem: '#start',
+                        value: minDate,
+                        min: minDate,
+                        max: maxDate,
+                        isInitValue: false //input框不显示初期値
+                    });
+                    laydate.render({
+                        elem: '#end',
+                        value: maxDate,
+                        min: minDate,
+                        max: maxDate,
+                        isInitValue: false //input框不显示初期値
+                    });
+                    table.render({
+                        elem: "table",
+                        id: "table",
+                        height: "full-130",
+                        page: true,
+                        url: 'getJcCoreWtListInfoByDate',
+                        where: { //设定异步数据接口的额外参数，任意设
+                            date: $('#date').val(),
+                        },
+                        method: 'post',
+                        limit: 20,
+                        text: {
+                            none: '暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+                        },
+                        cols: [
+                            [
+                                {field: 'wtNum', title: '委托单编号'},
+                                {
+                                    field: 'wtDate',
+                                    title: '委托日期',
+                                    templet: "<div>{{layui.util.toDateString(d.wtDate,'yyyy-MM-dd HH:mm:ss')}}</div>"
+                                },
+                                {field: 'wtUnit', title: '委托公司'},
+                                {field: 'wtMan', title: '委托人'},
+                                {field: 'jsStatus', title: '结算状态'},
+                                {
+                                    field: 'contractCode', title: '是否有合同', templet: function (d) {
+                                        if (d.contractCode) {
+                                            return "有合同";
+                                        } else {
+                                            return "无合同";
+                                        }
+                                    }
+                                }
+                                // {title:'操作',templet:'#operation',width:100}
+                            ]
+                        ]
+                        , response: {
+                            statusCode: 1 //重新规定成功的状态码为 200，table 组件默认为 0
+                        }
+                        , request: {
+                            pageName: 'pageNum',//页码的参数名称，默认：page
+                            limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                        }
+                        , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                            return {
+                                "code": res.code, //解析接口状态
+                                "msg": res.msg, //解析提示文本
+                                "count": res.data.total, //解析数据长度
+                                "data": res.data.list //解析数据列表
+                            };
+                        }
+                    });
+
+                    table.on('tool(test)', function (obj) {
+                        if (obj.event == "info") {
+                            parent.contractInfo()
+                        }
+                    })
+                    $("#sreach").on("click", function () {
+                        table.reload('table', {
+                            where: { //设定异步数据接口的额外参数，任意设
+                                wtNum: $("#number").val(),
+                                startTime: $("#start").val(),
+                                endTime: $("#end").val(),
+                                jsStatus: $('#jsStatus').val(),
+                                contractCode: $('#contractCode').val(),
+                                date: $('#date').val()
+                            }
+                            , page: {
+                                curr: 1 //重新从第 1 页开始
+                            }
+                        })
+                    })
+                });
+            });
+        }
+
+    </script>
+</html>

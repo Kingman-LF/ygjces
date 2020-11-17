@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xwkj.ygjces.Mapper.RoleInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.xwkj.ygjces.model.RoleInfo">
+        <id column="pid" property="id" jdbcType="BIGINT" />
+        <result column="roleName" property="roleName" jdbcType="VARCHAR"/>
+        <result column="note" property="note" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="createUserId" property="createUserId" jdbcType="BIGINT"/>
+        <result column="isEnable" property="enable" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="ManualResultMap" type="com.xwkj.ygjces.model.RoleInfo">
+        <id column="pid" property="id" jdbcType="BIGINT" />
+        <result column="roleName" property="roleName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="saveRoleInfo" parameterType="com.xwkj.ygjces.model.RoleInfo" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `tbl_gb_role_info` ( `roleName`, `note`, `isEnable`, `createTime`, `createUserId`)
+        VALUES ( #{roleName},  #{note},  #{enable},  #{createTime},  #{createUserId});
+    </insert>
+
+    <update id="updateRoleInfo" parameterType="com.xwkj.ygjces.model.RoleInfo">
+        UPDATE tbl_gb_role_info
+        <set>
+            <!--<if test="id != null and id > 0">-->
+                <!--`pid` = #{id},-->
+            <!--</if>-->
+              <if test="roleName != null and roleName != ''">
+                  roleName = #{roleName},
+              </if>
+              <if test="note != null and note != ''">
+                  note = #{note},
+              </if>
+              <if test="enable != '' and enable != null">
+                  isEnable = #{enable},
+              </if>
+              <if test="createTime != null and createTime != ''">
+                  createTime = #{createTime},
+              </if>
+              <if test="createUserId != null and createUserId != ''">
+                  createUserId = #{createUserId},
+              </if>
+        </set>
+            WHERE pid = #{id}
+    </update>
+    
+    <delete id="deleteRoleInfoById" parameterType="Long">
+        DELETE FROM tbl_gb_role_info WHERE pid = #{id}
+    </delete>
+
+    <select id="getRoleInfoList" resultMap="BaseResultMap" parameterType="com.xwkj.ygjces.model.RoleInfo">
+        SELECT * FROM tbl_gb_role_info AS r WHERE r.isEnable = #{enable}
+        <if test="roleName != null and roleName != ''">
+            AND r.`roleName` like CONCAT (CONCAT ("%" , #{roleName}) , "%")
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND r.createTime <![CDATA[>=]]> #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND r.createTime <![CDATA[<=]]> #{endDate}
+        </if>
+        ORDER  by  r.createTime DESC
+    </select>
+
+    <select id="getAllRoleInfo" resultMap="BaseResultMap">
+        SELECT * FROM tbl_gb_role_info AS r WHERE r.isEnable = 1
+    </select>
+
+    <select id="getRoleInfoByUserId" resultMap="BaseResultMap">
+        SELECT K.* FROM  `tbl_gb_role_info` k,`tbl_gb_user_role_related` t
+        WHERE  t.userId = #{value} AND K.isEnable=1 and t.roleId = k.pid
+    </select>
+
+    <select id="getRoleInfoListByUserId" resultMap="ManualResultMap">
+        SELECT r.pid,r.roleName from tbl_gb_user_info u
+        INNER JOIN tbl_gb_user_role_related ur ON u.pid=ur.userId
+        INNER JOIN tbl_gb_role_info r ON ur.roleId=r.pid
+        WHERE u.isEnable=1 AND r.isEnable=1 AND u.pid = #{id}
+    </select>
+</mapper>

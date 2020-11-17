@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css" th:href="@{/css/font.css}">
+        <link rel="stylesheet" href="./css/xadmin.css" th:href="@{/css/xadmin.css}">
+        <script type="text/javascript" src="./lib/layui/layui.js" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+        <script type="text/javascript" src="./js/xadmin.js" th:src="@{/js/xadmin.js}"></script>
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+        <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                                <div class="layui-inline layui-show-xs-block" id="a">
+									<input type="text"  placeholder="请输入委托单号" autocomplete="off" class="layui-input" id="number">
+								</div>
+								<div class="layui-inline layui-show-xs-block" id="b">
+									<input type="text"  placeholder="请选择开始时间" autocomplete="off" class="layui-input" id="start">
+								</div>
+								<div class="layui-inline layui-show-xs-block" id="c">
+									<input type="text"  placeholder="请选择结束时间" autocomplete="off" class="layui-input" id="end">
+								</div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <button type="button" class="layui-btn" id="sreach"><i class="layui-icon">&#xe615;</i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form" id="table" lay-filter='test'></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+	</body>
+	<script type="text/html" id="operation">
+		<div class="layui-btn-container">
+			<button class="layui-btn layui-btn-sm" lay-event="info">详情</button>
+		</div>
+	</script>
+    <script>
+		function getData(data){
+            console.log(data.name)
+            console.log(data.seriesName)
+			layui.use(['table','jquery','laydate','layer','laytpl'], function(){
+				var table = layui.table,
+					$ = layui.jquery,
+					laydate = layui.laydate,
+					layer = layui.layer;
+
+				laydate.render({
+					elem: '#start',
+//					value:data.startTime,
+//					min:'2019-07-01',
+//					max:'2019-07-31',
+//					done: function(value, date, endDate){
+//						console.log(value); //得到日期生成的值，如：2017-08-18
+//						console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+//						console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+//					}
+				});
+				laydate.render({
+					elem: '#end',
+//					value:data.endTime,
+//					min:'2019-07-01',
+//					max:'2019-07-31',
+//					done: function(value, date, endDate){
+//						console.log(value); //得到日期生成的值，如：2017-08-18
+//						console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+//						console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+//					}
+				});
+//				 var dom = ""
+//				 var shaixuantiaojian = [{key:"number",tips:"请输入委托单号"}]
+//				 $(shaixuantiaojian).each(function(){
+//					 dom+='<input type="text" name="username"  placeholder="'+this.tips+'" autocomplete="off" class="layui-input" id="'+this.key+'">'
+//				 })
+//				 $("#shaixuan").html(dom)
+                var city="";
+				if(data.seriesName == "langfang"){
+				    city="廊坊市";
+                }else if(data.seriesName == "tianjin"){
+				    city="天津市";
+                }else if(data.seriesName == "beijing"){
+                    city="北京市";
+                }
+//                console.log("12312313213131")
+//                console.log(city)
+//                console.log(data.data.name)
+//                console.log(data.startTime)
+//                console.log(data.endTime)
+                table.render({
+                    elem: "table",
+                    id: "table",
+                    url: "getMapCityAreaWtInfo",
+                    method: "post",
+                    height: "full-130",
+                    page: true,
+                    limit: 10,
+                    text: {
+                        none: "暂无相关数据!"
+                    },request: {
+                        pageName: 'pageNum',//页码的参数名称，默认：page
+                        limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                    },where:{
+                        city: city,
+                        area: data.data.name,
+                        startTime: data.startTime,
+                        endTime: data.endTime
+                    },
+                    cols: [
+                        [
+                            {field:"wtNum", title:"委托单号"},
+						    {field:"wtDate", title:"日期",templet:"<div>{{layui.util.toDateString(d.wtDate,'yyyy-MM-dd HH:mm:ss')}}</div>"},
+						    {field:"wtUnit", title:"甲方"},
+                            {field:"xmName", title:"委托项"},
+                            {field:"contractCode", title:"所属合同号"},
+						    {field:"realMoney", title:"金额"},
+                        ]
+                    ], response: {
+                        statusCode: 1 //重新规定成功的状态码为 200，table 组件默认为 0
+                    }
+                    , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                        return {
+                            "code": res.code, //解析接口状态
+                            "msg": res.msg, //解析提示文本
+                            "count": res.data.total, //解析数据长度
+                            "data": res.data.list //解析数据列表
+                        };
+                    }
+                })
+				table.on('tool(test)',function(obj){
+					if(obj.event=="info"){
+						parent.contractInfo()
+					}
+				})
+				$("#sreach").on("click",function(){
+//					var data = {}
+//					$(shaixuantiaojian).each(function(){
+//						data[this.key] = $("#"+this.key).val()
+//					})
+//                    console.log($("#number").val())
+//                    console.log($("#start").val())
+//                    console.log($("#end").val())
+					table.reload('table',{
+						where:{
+                            city: city,
+                            area: data.data.name,
+                            wt_num:$("#number").val(),
+                            startTime: $("#start").val(),
+                            endTime: $("#end").val()
+                        }
+					})
+				})
+			});
+		}
+    </script>
+</html>

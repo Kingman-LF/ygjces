@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xwkj.ygjces.Mapper_oracle.JcXtcsXmCategoryMapperManual" >
+    <resultMap id="BaseMap" type="com.xwkj.ygjces.model.JcXtcsXmCategory">
+        <id column="category_id" property="categoryId"></id>
+        <result column="category_name" property="categoryName"></result>
+        <result column="pid" property="pid"></result>
+    </resultMap>
+
+    <resultMap id="jcXmCategoryMap" type="com.xwkj.ygjces.controller.vo.JcXmCategoryVo">
+        <id column="category_id" property="categoryId"></id>
+        <result column="category_name" property="categoryName"></result>
+        <result column="pid" property="pid"></result>
+    </resultMap>
+
+    <select id="getJcXtcsXm" resultMap="BaseMap">
+        select t.category_id,t.category_name,t.pid from JC_XTCS_XM_CATEGORY t where t.pid = '17cc22bedd344dbda6083c5fe5d27bc6'
+    </select>
+
+    <select id="getJcXtcsXmCategoryList" resultMap="jcXmCategoryMap">
+        select t.category_id,t.category_name,t.pid from JC_XTCS_XM_CATEGORY t order by t.seq
+    </select>
+
+    <select id="selectExistById" resultType="Integer">
+        select count(1) from JC_XTCS_XM_CATEGORY where category_id = #{categoryIds}
+    </select>
+</mapper>

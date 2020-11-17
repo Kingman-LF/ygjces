@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+    <!--
+        targetRuntime="MyBatis3Simple":生成简单版的CRUD
+        MyBatis3:豪华版
+
+     -->
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!-- jdbcConnection：指定如何连接到目标数据库 -->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql:///ygjc_es?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;autoReconnect=true&amp;nullCatalogMeansCurrent=true&amp;failOverReadOnly=false&amp;&amp;serverTimezone=UTC"
+                        userId="root"
+                        password="zhangyonghui">
+        </jdbcConnection>
+        <!--<jdbcConnection driverClass="oracle.jdbc.OracleDriver"
+                        connectionURL="jdbc:oracle:thin:@127.0.0.1:1521:orcl"
+                        userId="scott"
+                        password="123456">
+        </jdbcConnection>-->
+
+        <!--  -->
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!-- javaModelGenerator：指定javaBean的生成策略
+        targetPackage="test.model"：目标包名
+        targetProject="\MBGTestProject\src"：目标工程
+        -->
+        <javaModelGenerator targetPackage="com.xwkj.ygjces.model"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!-- sqlMapGenerator：sql映射生成策略： -->
+        <sqlMapGenerator targetPackage="mapper_auto"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <!--<sqlMapGenerator targetPackage="oracle_mapper_auto"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>-->
+
+        <!-- javaClientGenerator:指定mapper接口所在的位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.xwkj.ygjces.Mapper.auto"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!--<javaClientGenerator type="XMLMAPPER" targetPackage="com.xwkj.ygjces.Mapper_oracle.auto"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>-->
+
+        <!-- 指定要逆向分析哪些表：根据表要创建javaBean -->
+        <!--<table tableName="tbl_gb_task_info" enableSelectByExample="false"  enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" domainObjectName="TaskInfo"></table>-->
+        <table tableName="tbl_gb_task_notice" enableSelectByExample="false"  enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" domainObjectName="TaskInfoNotice"></table>
+        <!--<table tableName="tbl_gb_task_overtime" enableSelectByExample="false"  enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" domainObjectName="TaskOverTime"></table>-->
+        <!--<table tableName="tbl_gb_task_remind" enableSelectByExample="false"  enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" domainObjectName="TaskRemind"></table>-->
+    </context>
+</generatorConfiguration>

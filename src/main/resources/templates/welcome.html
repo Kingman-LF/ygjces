@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="./css/font.css">
+        <link rel="stylesheet" href="./css/xadmin.css">
+        <script src="./lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="./js/xadmin.js"></script>
+		<script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <style>
+            .x-admin-sm .layui-icon{
+                font-size: 12px;
+            }
+			@media screen and (min-width: 992px){
+				.layui-col-md20{
+					width: 20%;
+				}
+			}
+				
+        </style>
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">数据统计</div>
+                        <div class="layui-card-body ">
+                            <ul class="layui-row layui-col-space10 layui-this x-admin-carousel x-admin-backlog">
+                                <li class="layui-col-md20 layui-col-xs6">
+                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                        <h3>合同增长<span class="layui-badge layui-bg-cyan layuiadmin-badge">日</span></h3>
+                                        <p>
+                                            <cite id="htNumWithOneDay"></cite></p>
+                                    </a>
+                                </li>
+                                <li class="layui-col-md20 layui-col-xs6">
+                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                        <h3>委托单完成<span class="layui-badge layui-bg-cyan layuiadmin-badge">日</span></h3>
+                                        <p>
+                                            <cite id="wtNumWithOneDay"></cite></p>
+                                    </a>
+                                </li>
+                                <li class="layui-col-md20 layui-col-xs6">
+                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                        <h3>报告完成<span class="layui-badge layui-bg-cyan layuiadmin-badge">日</span></h3>
+                                        <p>
+                                            <cite id="reportCompletionWithOneDay"></cite></p>
+                                    </a>
+                                </li>
+                                <li class="layui-col-md20 layui-col-xs6">
+                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                        <h3>打印数量<span class="layui-badge layui-bg-cyan layuiadmin-badge">日</span></h3>
+                                        <p>
+                                            <cite id="printReportCountWithOneDay"></cite></p>
+                                    </a>
+                                </li>
+                                <li class="layui-col-md20 layui-col-xs6">
+                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                        <h3>金额<span class="layui-badge layui-bg-cyan layuiadmin-badge">日</span></h3>
+                                        <p>
+                                            <cite id="wtRealMoneyWithOneDay"></cite></p>
+                                    </a>
+                                </li>
+								<li class="layui-col-md12 layui-col-xs12 " style="height: 1px;background-color: #ccc;padding: 0;">
+                                <li class="layui-col-md3 layui-col-xs6 ">
+                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                        <h3>合同增长<span class="layui-badge layui-bg-cyan layuiadmin-badge">月</span></h3>
+                                        <p>
+                                            <cite id="htNumWithOneMonth"></cite></p>
+                                    </a>
+                                </li>
+								<li class="layui-col-md3 layui-col-xs6 ">
+								    <a href="javascript:;" class="x-admin-backlog-body">
+								         <h3>委托单完成<span class="layui-badge layui-bg-cyan layuiadmin-badge">月</span></h3>
+								        <p>
+								            <cite id="wtNumWithOneMonth"></cite></p>
+								    </a>
+								</li>
+								<li class="layui-col-md3 layui-col-xs6 ">
+								    <a href="javascript:;" class="x-admin-backlog-body">
+								        <h3>打印数量<span class="layui-badge layui-bg-cyan layuiadmin-badge">月</span></h3>
+								        <p>
+								            <cite id="printReportCountWithOneMonth"></cite></p>
+								    </a>
+								</li>
+								<li class="layui-col-md3 layui-col-xs6 ">
+								    <a href="javascript:;" class="x-admin-backlog-body">
+								        <h3>金额<span class="layui-badge layui-bg-cyan layuiadmin-badge">月</span></h3>
+								        <p>
+								            <cite id="wtRealMoneyWithOneMonth"></cite></p>
+								    </a>
+								</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+				<div class="layui-col-md12">
+				    <div class="layui-card">
+				        <div class="layui-card-header">数据统计</div>
+				        <div class="layui-card-body ">
+							<div id="main1" style="display: inline-block;width:49%;height:400px"></div>
+							<div id="main2" style="display: inline-block;width:49%;height:400px"></div>
+						</div>
+				    </div>
+				</div>
+            </div>
+        </div>
+        </div>
+    </body>
+    <script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+	<script type="text/javascript">
+
+        //查询当天合同数量
+        $.ajax({
+            url:"htNumWithOneDay",
+            method:"post",
+            success:function (data) {
+                $("#htNumWithOneDay").html(data.data)
+            },
+            error:function (data) {
+            }
+        })
+        //查询当月合同数量
+        $.ajax({
+            url:"htNumWithOneMonth",
+            method:"post",
+            success:function (data) {
+                $("#htNumWithOneMonth").html(data.data)
+            },
+            error:function (data) {
+
+            }
+        })
+        //查询当天委托单数量
+        $.ajax({
+            url:"wtNumWithOneDay",
+            method:"post",
+            success:function (data) {
+                $("#wtNumWithOneDay").html(data.data)
+            },
+            error:function (data) {
+
+            }
+        })
+        //查询当月委托单数量
+        $.ajax({
+            url:"wtNumWithOneMonth",
+            method:"post",
+            success:function (data) {
+                $("#wtNumWithOneMonth").html(data.data)
+            },
+            error:function (data) {
+
+            }
+        })
+        //查询当天报告完成量
+//        $.ajax({
+//            url:"reportCompletionWithOneDay",
+//            method:"post",
+//            success:function (data) {
+//                $("#reportCompletionWithOneDay").html(data.data)
+//            },
+//            error:function (data) {
+//
+//            }
+//        })
+        //查询当天打印报告量
+        $.ajax({
+            url:"printReportCountWithOneDay",
+            method:"post",
+            success:function (data) {
+                $("#printReportCountWithOneDay").html(data.data)
+                $("#reportCompletionWithOneDay").html(data.data)
+            },
+            error:function (data) {
+
+            }
+        })
+        //查询当月打印量
+        $.ajax({
+            url:"printReportCountWithOneMonth",
+            method:"post",
+            success:function (data) {
+                $("#printReportCountWithOneMonth").html(data.data)
+            },
+            error:function (data) {
+
+            }
+        })
+        //查询当天委托金额量
+        $.ajax({
+            url:"wtRealMoneyWithOneDay",
+            method:"post",
+            success:function (data) {
+                $("#wtRealMoneyWithOneDay").html(data.data)
+            },
+            error:function (data) {
+
+            }
+        })
+        //查询当月委托金额量
+        $.ajax({
+            url:"wtRealMoneyWithOneMonth",
+            method:"post",
+            success:function (data) {
+                $("#wtRealMoneyWithOneMonth").html(data.data)
+            },
+            error:function (data) {
+
+            }
+        })
+		// 基于准备好的dom，初始化echarts实例
+		var myChart1 = echarts.init(document.getElementById('main1'));
+		var myChart2 = echarts.init(document.getElementById('main2'));
+					// 指定图表的配置项和数据
+		var option1 = {
+			title: {
+				text: '当年合同数量统计'
+			},
+			tooltip: {
+				trigger: 'axis',
+				formatter:function(params){
+					return params[0].axisValue+"<br>合同量:"+params[0].value+"份"
+				}
+			},
+			grid: {
+				left: '3%',
+				right: '4%',
+				bottom: '3%',
+				containLabel: true
+			},
+			toolbox: {
+
+			},
+			xAxis: {
+				type: 'category',
+				boundaryGap: false,
+				data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
+			},
+			yAxis: {
+				type: 'value'
+			},
+			series: [
+				{
+					name:'合同数量',
+					type:'line',
+					stack: '总量',
+					data:[120, 132, 101, 134, 90, 230, 210,120, 132, 101, 134, 90]
+				},
+			]
+		};
+		var option2 = {
+			title: {
+				text: '当年报告统计'
+			},
+			legend: {
+				data:['报告数量','打印数量']
+			},
+			grid: {
+				left: '3%',
+				right: '4%',
+				bottom: '3%',
+				containLabel: true
+			},
+			tooltip: {
+				trigger: 'axis',
+			},
+			toolbox:{},
+			xAxis: {
+				type: 'category',
+				data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+				axisPointer: {
+					type: 'shadow'
+				}
+			},
+			yAxis: {
+				type: 'value',
+			},
+			// Declare several bar series, each will be mapped
+			// to a column of dataset.source by default.
+			series: [
+				{
+				name:'报告数量',
+				type:'bar',
+				data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+			},
+			{
+				name:'打印数量',
+				type:'bar',
+				data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+			},
+			]
+		};
+		// 使用刚指定的配置项和数据显示图表。
+        $.ajax({
+            url:"htCountByMonth",
+            method:"post",
+            success:function (data) {
+                myChart1.setOption({
+                    title: {
+                        text: '当年合同数量统计'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter:function(params){
+                            return params[0].axisValue+"<br>合同量:"+params[0].value+"份"
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name:'合同数量',
+                            type:'line',
+                            stack: '总量',
+                            data:data.data
+                        },
+                    ]
+                })
+            },
+            error:function (data) {
+
+            }
+        })
+        $.ajax({
+            url:"reportCountByMonth",
+            method:"post",
+            success:function (data) {
+                myChart2.setOption({
+                    title: {
+                        text: '当年报告统计'
+                    },
+                    legend: {
+                        data:['报告数量','打印数量']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                    },
+                    toolbox:{},
+                    xAxis: {
+                        type: 'category',
+                        data: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                    },
+                    // Declare several bar series, each will be mapped
+                    // to a column of dataset.source by default.
+                    series: [
+                        {
+                            name:'报告数量',
+                            type:'bar',
+                            data:data.data[0]
+                        },
+                        {
+                            name:'打印数量',
+                            type:'bar',
+                            data:data.data[1]
+                        },
+                    ]
+                })
+            },
+            error:function (data) {
+
+            }
+        })
+//		myChart1.setOption(option1);
+//		myChart2.setOption(option2);
+	</script>
+</html>

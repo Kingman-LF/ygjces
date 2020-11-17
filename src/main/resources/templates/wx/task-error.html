@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>处理完毕</title>
+</head>
+<body>
+    <h1 th:if="${status == 1}">此待审批任务已处理完毕</h1>
+    <h1 th:if="${status == 2}">此待完成任务已处理完毕</h1>
+    <h1 th:if="${status == 3}">此待确认任务已处理完毕</h1>
+    <h1 th:if="${status == 4}">此驳回任务已处理完毕</h1>
+</body>
+</html>

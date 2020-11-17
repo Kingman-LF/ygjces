@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>任务排行</title>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+<link rel="stylesheet" href="css/weui.min.css" th:href="@{/css/weui.min.css}">
+<link rel="stylesheet" href="css/jquery-weui.css"  th:href="@{/css/jquery-weui.css}">
+<link rel="stylesheet" href="css/demos.css"  th:href="@{/css/demos.css}">
+<link rel="stylesheet" href="css/iconfont.css"  th:href="@{/css/iconfont.css}">
+<script src="js/iconfont.js" th:src="@{/js/iconfont.js}"></script>
+<link rel="stylesheet" href="css/tasklist.css"  th:href="@{/css/tasklist.css}">
+<script src="js/echarts.min.js" th:src="@{/js/echarts.min.js}"></script>
+ </head>
+  <body ontouchstart>
+    <div class="weui-tab">
+   
+      <div class="weui-tab__bd">
+        <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active">
+        	<div class="weui-panel">
+		        <div style="width:90%;margin:20px 5% 0 5%; height:350px;" id="chartmain"></div>
+        	 	<div style="width:90%;margin:20px 5% 0 5%; height:350px;" id="chartmain1"></div>
+        	</div>
+        </div>
+      
+      </div>
+    </div>
+    <script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+<script src="js/fastclick.js" th:src="@{/js/fastclick.js}"></script>
+<script type="text/javascript">
+window.onload = function (){
+
+}
+</script>
+
+
+<script>
+  $(function() {
+    FastClick.attach(document.body);
+      //获取dom容器
+      var overTimeChart = echarts.init(document.getElementById('chartmain'));
+      //指定图表的配置项和数据
+      option = {
+          title: {
+              text: '超时榜'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'shadow'
+              }
+          },
+          /* legend: {
+               data: ['本月']
+           },*/
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+          },
+          xAxis: {
+              type: 'value',
+              boundaryGap: [0, 0.01]
+          },
+          yAxis: {
+              type: 'category',
+              data: []
+          },
+          series: [
+              {
+                  name: '数量',
+                  type: 'bar',
+                  data: []
+              }
+
+          ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      overTimeChart.setOption(option);
+      //获取dom容器
+      var advanceChart = echarts.init(document.getElementById('chartmain1'));
+      //指定图表的配置项和数据
+
+      option = {
+          title: {
+              text: '准时榜'
+          },
+          tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                  type: 'shadow'
+              }
+          },
+          /*legend: {
+              data: ['本月']
+          },*/
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+          },
+          xAxis: {
+              type: 'value',
+              boundaryGap: [0, 0.01]
+          },
+          yAxis: {
+              type: 'category',
+              data: []
+          },
+          series: [
+              {
+                  name: '数量',
+                  type: 'bar',
+                  data: []
+              }
+
+          ]
+      };
+
+
+      // 使用刚指定的配置项和数据显示图表。
+      advanceChart.setOption(option);
+
+      overTimeChart.on('click',function (param) {
+          console.log(param)
+          console.log(param.name)
+          window.location.href='/wx/toTaskOverTimeListPage?deptName='+param.name;
+
+      });
+
+      advanceChart.on('click',function (param) {
+          console.log(param)
+          console.log(param.name)
+          window.location.href='/wx/toTaskAdvanceListPage?deptName='+param.name;
+      });
+
+      $.ajax({
+          url : 'getOverTimeAndAdvanceTaskRankingList',
+          type : 'post',
+          dataType: 'json',
+          async : 'false',
+          success : function(result) {
+              if (result.success) {
+                  overTimeChart.setOption({
+                      yAxis: {
+                          data :  result.data[0],
+                      },
+                      series: [
+                          {
+                              name: '数量',
+                              data: result.data[1]
+                          },
+                      ]
+                  });
+                  advanceChart.setOption({
+                      yAxis: {
+                          data :  result.data[2],
+                      },
+                      series: [
+                          {
+                              name: '数量',
+                              data: result.data[3]
+                          },
+                      ]
+                  });
+
+              } else {
+                  alert(result.message);
+              }
+          }
+      });
+
+  });
+</script>
+<script src="js/jquery-weui.js" th:src="@{/js/jquery-weui.js}" ></script>
+</body>
+</html>

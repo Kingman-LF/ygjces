@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>提前任务列表</title>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+<link rel="stylesheet" href="css/weui.min.css" th:href="@{/css/weui.min.css}">
+<link rel="stylesheet" href="css/jquery-weui.css"  th:href="@{/css/jquery-weui.css}">
+<link rel="stylesheet" href="css/demos.css"  th:href="@{/css/demos.css}">
+<link rel="stylesheet" href="css/iconfont.css"  th:href="@{/css/iconfont.css}">
+<script src="js/iconfont.js" th:src="@{/js/iconfont.js}"></script>
+<link rel="stylesheet" href="css/tasklist.css"  th:href="@{/css/tasklist.css}">
+ </head>
+  <body ontouchstart>
+    <div class="weui-tab">
+      <div class="weui-navbar">
+        <a class="weui-navbar__item weui-bar__item--on" href="#tab1">
+			提前任务列表
+        </a>
+      </div>
+      <div class="weui-tab__bd">
+        <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active">
+        	<div class="weui-panel" th:each="model : ${list}">
+				<div class="weui-panel__bd">
+				  <div class="weui-media-box weui-media-box_text">
+					  <a th:href="@{'/wx/toRankingAdvanceTaskInfoPage?id='+${model.pid}}">
+						<h4 class="weui-media-box__title" th:text="${model.taskDes}">
+							检测报告方法标准问题整改
+						</h4>
+						<ul class="weui-media-box__info">
+						  <li class="weui-media-box__info__meta">来源：[[${model.source}]]</li>
+						  <li class="weui-media-box__info__meta">[[${#dates.format(model.createTime, 'yyyy-MM-dd HH:mm')}]]</li>
+						  <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">责任：[[${model.deptName}]]</li>
+						</ul>
+					  </a>
+				  </div>
+				</div>
+        	</div>
+        </div>
+      </div>
+    </div>
+	<script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+	<script src="js/fastclick.js" th:src="@{/js/fastclick.js}"></script>
+<script>
+  $(function() {
+    FastClick.attach(document.body);
+  });
+</script>
+	<script src="js/jquery-weui.js" th:src="@{/js/jquery-weui.js}" ></script>
+</body>
+</html>

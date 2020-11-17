@@ -1,0 +1,83 @@
+<!--添加用户弹出层-->
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Title</title>
+	    <link rel="stylesheet"  media="all" th:href="@{/lib/layui/css/layui.css}">
+	</head>
+	<body>
+		<form class="layui-form" method="" id="addDept">
+			<div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
+				<div class="layui-form-item">
+					<label class="layui-form-label">部门名称</label>
+					<div class="layui-input-block">
+						<input class="layui-input" lay-verify="required" type="text" name="name" id="deptNode">
+						<input class="layui-input " lay-verify="required" type="hidden" name="id" id="deptId">
+					</div>
+				</div>
+				<div class="layui-form-item layui-hide">
+						<button class="layui-btn" lay-submit lay-filter="LAY-dept-add-submit" id="LAY-dept-add-submit">添加</button>
+				</div>
+			</div>
+		</form>
+       	<script type="text/javascript"  th:src="@{/lib/layui/layui.js}"></script>
+		 <script th:src="@{/js/jquery.min.js}" ></script>
+		<script type="text/javascript">
+			layui.use(['layer', 'form','jquery'], function() {
+				var $ = layui.$,
+					form = layui.form,
+					layer = layui.layer;
+				form.verify({
+					
+				});
+				//监听提交
+				form.on('submit(LAY-dept-add-submit)', function(data) {
+		        	$.ajax({
+						url: 'updateOrganizationInfo',
+						data: $("#addDept").serialize(),
+						type: 'POST',
+						dataType: 'json',
+						success: function(data) {
+							if(data.success) {
+								window.parent.alertMessage('修改成功');
+								var index = parent.layer.getFrameIndex(window.name);
+								parent.layer.close(index);//关闭当前页
+								window.parent.editNameVision($("#deptId").val(),$("#deptNode").val());
+							}
+						},
+						error: function() {
+							layer.msg('系统错误', {
+								icon: 5
+							});
+						}
+					});
+				    return false;
+				});
+				$(viewObj.data).each(function(i,val){
+				    $("#stateSelect").append("<option value='" + val.id + "'>" + val.value + "</option>");
+			    })
+				form.render('select');
+				//加载角色的下拉框
+				/*$.ajax({
+					//url: '',
+					type: 'POST',
+					dataType: 'json',
+					success: function(data) {
+						$(data.data).each(function(i,val){
+							$("#roleSelect").append("<option value='" + val.id + "'>" + val.value + "</option>");
+						})
+						//重新渲染选择框
+						form.render('select');
+					},
+					error: function() {
+						layer.msg('系统错误', {
+							icon: 5
+						});
+					}
+				});*/
+				
+			});
+		</script>
+	</body>
+</html>

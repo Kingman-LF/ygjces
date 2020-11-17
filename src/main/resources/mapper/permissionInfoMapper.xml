@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xwkj.ygjces.Mapper.PermissionMapper">
+
+    <resultMap id="BaseResultMap" type="com.xwkj.ygjces.model.Permission">
+        <id column="pid" property="id" jdbcType="BIGINT" />
+        <result column="permName" property="permName" jdbcType="VARCHAR" />
+        <result column="perm" property="permssion" jdbcType="VARCHAR"/>
+        <result column="fId" property="fid" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="BaseResultVoMap" type="com.xwkj.ygjces.controller.vo.PermissionVo">
+        <id column="pid" property="id" jdbcType="BIGINT" />
+        <result column="permName" property="label" jdbcType="VARCHAR" />
+        <result column="checked" property="checked" jdbcType="TINYINT" />
+        <collection property="children" column="pid" select="getPermissionById"></collection>
+    </resultMap>
+
+    <!--<select id="getPermissionVoList" resultMap="BaseResultVoMap" parameterType="com.xwkj.ygjces.model.Permission">
+        SELECT * FROM tbl_gb_permission_info AS p WHERE p.`fId` = 0
+    </select>-->
+
+    <!--<select id="getPermissionById" resultMap="BaseResultVoMap" parameterType="java.lang.Long">
+        SELECT * FROM tbl_gb_permission_info AS p  WHERE p.`fId` = #{pid}
+    </select>-->
+
+    <select id="getPermissionList" resultMap="BaseResultMap" parameterType="com.xwkj.ygjces.model.Permission" >
+        SELECT * FROM tbl_gb_permission_info
+    </select>
+</mapper>

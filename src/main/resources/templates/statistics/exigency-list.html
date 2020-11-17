@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <link rel="stylesheet" href="./lib/layui/css/layui.css">
+    <script src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="x-nav">
+          <span class="layui-breadcrumb">
+            <a href="">首页</a>
+            <a href="">任务管理</a>
+            <a>
+              <cite>紧急程度管理</cite></a>
+          </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="exigencyName"  placeholder="请输入紧急程度名称" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <select id="enable" class="layui-select">
+                                <option value="1">启用</option>
+                                <option value="2">未用</option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" id="exigencySreachBtn" type="button" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button class="layui-btn" onclick="xadmin.open('添加紧急程度值','toExigencyInfoAdd',600,400)"><i class="layui-icon"></i>添加</button>
+                </div>
+                <div class="layui-card-body ">
+                    <table id="exigencyTableId" class="layui-table layui-form" lay-filter="exigencyTableId">
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+</script>
+<script type="text/html" id="switchEnable">
+    <input type="checkbox" name="enable" value="{{d.enable}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="sexDemo" checked="{{ d.id == 1 ? 'checked' : '' }}">
+    <!--<input type="checkbox" name="enable" lay-skin="switch"  lay-text="启用|禁用" lay-filter="roleFilter">-->
+</script>
+<script>
+    layui.use(['form','table'], function(){
+        var form = layui.form;
+        var table = layui.table;
+        var exigencyInfoTable = table.render({
+            elem: '#exigencyTableId',
+            url : 'showExigencyInfoPageList',
+            page : true,
+            where : {
+//                roleName : $("input[name='roleName']").val(),
+//                enable : $("#enable").val()
+            },
+            method : 'post',
+            limit : 10,
+            loading : true,
+            text :  {
+                none: '暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+            }
+            ,cols: [
+                [ //表头
+                    {field: 'pid', title: 'ID'}
+                    ,{field: 'exName', title: '紧急程度名称'}
+                    ,{field: 'level', title: '紧急程度等级'}
+                    ,{field: 'isEnable', title : '是否启用', templet: function (d) {
+                    var state = "";
+                    console.log(d)
+                    if (d.isEnable == "1") {
+                        state = "<input type='checkbox' value='" + d.pid + "' id='status' lay-filter='stat' checked='checked' name='enable' lay-skin='switch' lay-text='启用|停用'>";
+                    }
+                    else {
+                        state = "<input type='checkbox' value='" + d.pid + "' id='status' lay-filter='stat'  name='enable' lay-skin='switch' lay-text='启用|停用' >";
+                    }
+                    return state;
+                }, fixed: 'right'}
+//                    ,{field: 'pid' ,title : '操作', toolbar:'#barDemo', align:'center', fixed: 'right'}
+                ]
+            ]
+            ,response: {
+                statusCode: 1 //重新规定成功的状态码为 200，table 组件默认为 0
+            }
+            ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.list //解析数据列表
+                };
+            }
+        })
+
+        $("#exigencySreachBtn").on("click", function(){
+            exigencyInfoTable.reload({
+                where : {
+                    exName : $("input[name='exigencyName']").val(),
+                    isEnable : $("#enable").val()
+                }
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            })
+        })
+
+
+        table.on('tool(roleTableId)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+//            if(layEvent === 'del'){ //删除
+//                layer.confirm('确认要删除吗?', function(index){
+//                    $.ajax({
+//                        url: "deleteRole",
+//                        dataType:"json",
+//                        type: "post",
+//                        data: {id:data.id},
+//                        success: function(res){
+//                            table.reload("roleTableId");
+//                            layer.msg(res.msg,{icon:res.code,time:1000});
+//
+//                        }
+//                    });
+//                });
+//            }
+//            else if(layEvent === 'edit'){ //编辑
+//                layer.open({
+//                    type: 2,
+//                    title: "修改信息",
+//                    closeBtn: 1,
+//                    content:'toEditRoleInfo',
+//                    area: ['40%', '80%'],
+//                    shadeClose:true,
+//                    success: function (layero, index) {
+//                        var body = layer.getChildFrame('body', index);
+//                        body.find("#name").val(data.roleName);
+//                        body.find("#desc").val(data.note);
+//                        var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
+//                        iframeWin.a(data.id)
+//                        body.find("#roleId").val(data.id);
+//                    }
+//                })
+//            }
+        });
+
+        form.on('switch(stat)',function (data) {
+            var status = !data.elem.checked;
+            if(!data.elem.checked){
+                layer.confirm('确认要停用吗？',
+                    {btn:['是','否'],
+                        btn1:function(index) {
+                            $.ajax({
+                                url: 'updateExigency',
+                                data: {
+                                    pid: data.value,
+                                    isEnable: 2
+                                },
+                                type: 'POST',
+                                async: false,
+                                dataType: 'json',
+                                success: function (data) {
+                                    if (data.success) {
+                                        layer.msg('停用成功！', {icon: 6}, 1500);
+                                    } else {
+                                        layer.msg(data.msg, {icon: 5}, 1500);
+                                    }
+                                    table.reload("exigencyTableId");
+
+                                },
+                                error: function () {
+                                    layer.msg('系统错误！', {
+                                        icon: 5
+                                    });
+                                }
+                            });
+                        },
+                        btn2:function () {
+                            $(data.elem).prop('checked',status);
+                            form.render('checkbox');
+                        }
+                    });
+            }else {
+                layer.confirm('确认要启用吗？',
+                    {btn:['是','否'],
+                        btn1:function(index) {
+                            $.ajax({
+                                url: 'updateExigency',
+                                data: {
+                                    pid: data.value,
+                                    isEnable: 1
+                                },
+                                type: 'POST',
+                                async: false,
+                                dataType: 'json',
+                                success: function (data) {
+                                    if (data.success) {
+                                        layer.msg('启用成功！', {icon: 6}, 1500);
+                                    } else {
+                                        layer.msg('启用失败！', {icon: 5}, 1500);
+                                    }
+
+                                },
+                                error: function () {
+                                    layer.msg('系统错误！', {
+                                        icon: 5
+                                    });
+                                }
+                            });
+                        },
+                        btn2:function () {
+                            $(data.elem).prop('checked',status);
+                            form.render('checkbox');
+                        }
+                    });
+            }
+        });
+
+    });
+
+</script>
+</html>

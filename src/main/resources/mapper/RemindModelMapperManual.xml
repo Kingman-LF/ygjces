@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xwkj.ygjces.Mapper.RemindModelMapperManual" >
+  <resultMap id="BaseResultMap" type="com.xwkj.ygjces.model.RemindModel" >
+    <id column="pid" property="pid" jdbcType="BIGINT" />
+    <result column="sy_num" property="syNum" jdbcType="VARCHAR" />
+    <result column="wt_num" property="wtNum" jdbcType="VARCHAR" />
+    <result column="wt_unit" property="wtUnit" jdbcType="VARCHAR" />
+    <result column="xm_num" property="xmNum" jdbcType="VARCHAR" />
+    <result column="xm_name" property="xmName" jdbcType="VARCHAR" />
+    <result column="stage" property="stage" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="wt_date" property="wtDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pid, sy_num, wt_num, wt_unit, xm_num, xm_name, stage, create_date
+  </sql>
+  <insert id="insertRemindModelBatch" parameterType="com.xwkj.ygjces.model.RemindModel" >
+    insert into tbl_gb_xm_remind(sy_num,wt_num,wt_unit,xm_num,xm_name,stage,create_date,wt_date) values
+    <foreach collection ="list" item="item" separator =",">
+    (#{item.syNum,jdbcType=VARCHAR}, #{item.wtNum,jdbcType=VARCHAR},
+      #{item.wtUnit,jdbcType=VARCHAR}, #{item.xmNum,jdbcType=VARCHAR}, #{item.xmName,jdbcType=VARCHAR},
+      #{item.stage,jdbcType=INTEGER}, #{item.createDate,jdbcType=TIMESTAMP},#{item.wtDate,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+  <select id="getRemindModelListByCreateTimeAndStage" resultMap="BaseResultMap">
+    SELECT *
+    FROM tbl_gb_xm_remind
+    WHERE stage = #{stage}
+    AND DATE_FORMAT(create_date,'%Y-%m-%d') = DATE_FORMAT(#{createTime},'%Y-%m-%d')
+  </select>
+</mapper>

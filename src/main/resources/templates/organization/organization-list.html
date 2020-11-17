@@ -1,0 +1,88 @@
+<!--添加人员弹出层-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>组织机构管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="./css/font.css" th:href="@{/css/font.css}">
+    <link rel="stylesheet" href="./css/xadmin.css" th:href="@{/css/xadmin.css}">
+    <script src="./lib/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js" th:src="@{/js/xadmin.js}"></script>
+    <script type="text/javascript" src="./comment/messageAlert.js" th:src="@{/comment/messageAlert.js}"></script>
+    <link rel="stylesheet" href="./css/metroStyle.css" th:href="@{/css/metroStyle.css}">
+    <script src="./js/jquery.ztree.all.min.js" th:src="@{/js/jquery.ztree.all.min.js}"></script>
+    <script type="text/javascript"  th:src="@{/js/officemna.js}"></script>
+
+    <style>
+        .layui-input, .layui-textarea {
+            display: block;
+            padding-left: 10px;
+            border: none;
+            outline: none
+        }
+    </style>
+</head>
+<script th:inline="javascript">
+    //全局变量，拿到该页面所有的权限
+    var parameter = [[${parameter}]];
+</script>
+<body class="layui-anim layui-anim-up">
+
+    <div class="x-nav">
+                <span class="layui-breadcrumb">
+                    <a href="">首页</a>
+                  <a href="">系统管理</a>
+                  <a>
+                     <cite>组织架构管理</cite>
+                  </a>
+                </span>
+        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+           href="javascript:location.replace(location.href);" title="刷新">
+            <i class="layui-icon" style="line-height:38px">ဂ</i>
+        </a>
+    </div>
+    <div class="layui-row" style="margin-top: 20px">
+        <div class="layui-col-md2">
+            <!--科室管理-->
+            <ul id="officemna" class="ztree"></ul>
+        </div>
+        <div class="layui-col-md10">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">人员名称</label>
+                        <div class="layui-input-block ">
+                            <input class="layui-input" type="text" name="tName" id="tName" placeholder="请输入人员名称">
+                        </div>
+                    </div>
+                    <div class="layui-inline" style="margin-left: 20px;">
+                        <button class="layui-btn selectUser">立即查找</button>
+                    </div>
+                    <div class="layui-inline" style="margin-left: 20px;">
+                        <input id="tId" type="hidden">
+                        <button class="layui-btn addUser">添加用户</button>
+                    </div>
+                </div>
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <table class="layui-hide" id="orgTable" lay-filter="orgTable"></table>
+                    <script type="text/html" id="orgTable-manage">
+                        <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit">编辑</a>
+                        {{#  if(d.isLeader == 1){ }}
+                        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="remove_leader">取消领导</a>
+                        {{#  } else if(d.isLeader == 0){ }}
+                        <a class="layui-btn layui-btn-xs" lay-event="leader">设置领导</a>
+                        {{#  } }}
+
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>发布任务</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+    ">
+    <link rel="stylesheet" href="css/weui.min.css" th:href="@{/css/weui.min.css}">
+    <link rel="stylesheet" href="css/jquery-weui.css" th:href="@{/css/jquery-weui.css}">
+    <link rel="stylesheet" href="css/demos.css" th:href="@{/css/demos.css}">
+    <link rel="stylesheet" href="css/iconfont.css" th:href="@{/css/iconfont.css}">
+    <link rel="stylesheet" href="css/submit.css" th:href="@{/css/submit.css}">
+    <link rel="stylesheet" media="all" th:href="@{/css/metroStyle.css}">
+</head>
+<body ontouchstart>
+<div class="zdy-top">
+
+</div>
+<div class="zdy-card">
+    <div class="weui-cells weui-cells_form" style="margin-top: 0;">
+        <div class="zdy-title">任务提交</div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="iconfont icon-renwu-"></span>
+                    <p><span><b>任</b><b>务</b><b>内</b><b>容</b></span></p>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入" id="taskDes" name="taskDes">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="iconfont icon-source"></span>
+                    <p><span><b>任</b><b>务</b><b>来</b><b>源</b></span></p>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入" id="source" name="source">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="iconfont icon-riqi"></span>
+                    <p><span><b>任</b><b>务</b><b>节</b><b>点</b></span></p>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="date" placeholder="请输入" id="endDate" name="endDate">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="iconfont icon-bumen"></span>
+                    <p><span><b>责</b><b>任</b><b>部</b><b>门</b></span></p>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <ul id="menuTree" class="ztree"></ul>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="iconfont icon-zhongyaodengji"></span>
+                    <p><span><b>等</b><b>级</b></span></p>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <select class="weui-select" id="level" name="level">
+                    <option value="">请选择等级</option>
+                </select>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    <span class="iconfont icon-beizhu-"></span>
+                    <p><span><b>备</b><b>注</b></span></p>
+                </label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入" id="note" name="note">
+            </div>
+        </div>
+    </div>
+    <div class="weui-btn-area">
+        <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips">确定</a>
+    </div>
+</div>
+
+<script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+<script type="text/javascript" th:src="@{/js/jquery.ztree.all.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/fast-helper.js}"></script>
+<script src="js/fastclick.js" th:src="@{/js/fastclick.js}"></script>
+<script>
+    $(function () {
+        FastClick.attach(document.body);
+        var setting = {
+            data : {
+                simpleData : {
+                    enable : true,
+                    rootPId : 0
+                }
+            },
+            check : {
+                enable : true,
+                chkboxType : { "Y": "s", "N": "ps"}
+                // nocheckInherit : true
+            },
+            callback: {
+                onClick: function (e, treeId, treeNode, clickFlag) {
+                    var ztree = $.fn.zTree.getZTreeObj("menuTree");
+                    //ztree.checkNode(treeNode, true, true);
+                    ztree.checkNode(treeNode, !treeNode.checked, true);
+                    //treeNode.checked = true;
+                    // alert(123)
+                }
+            }
+        };
+
+        $.ajax({
+            url : '/getOrganziationInfoList',
+            type : 'post',
+            dataType: 'json',
+            async : 'false',
+            success : function(result) {
+                if (result.success) {
+                    ztree = $.fn.zTree.init($("#menuTree"),setting, result.data);
+                    //展开所有节点
+                    ztree.expandAll(true);
+                } else {
+                    alert(result.message);
+                }
+            }
+        });
+        $.ajax({
+            url: 'getExigencyInfoList',
+            type: 'post',
+            dataType: 'json',
+            success: function (result) {
+                if (result.success) {
+                    $.each(result.data, function () {
+                        var optionEle = $("<option></option>").append(this.exName).attr("value", this.level);
+                        optionEle.appendTo($('#level'));
+                    });
+                } else {
+                    alert(result.message);
+                }
+            }
+        });
+        $("#showTooltips").click(function () {
+            var zTreeOjb = $.fn.zTree.getZTreeObj("menuTree");
+            var nodes = zTreeOjb.getCheckedNodes(true);//在提交表单之前将选中的checkbox收集
+            var array = new Array();
+            for(var i=0;i<nodes.length;i++){
+                array.push(nodes[i].id);
+            }
+            var deptIds = array.join(",");
+            $.ajax({
+                url: 'addTaskInfo',
+                type: 'post',
+                data: {
+                    "taskDes": $('#taskDes').val(),
+                    "source": $('#source').val(),
+                    "endDate": $('#endDate').val(),
+                    "deptid": deptIds,
+                    "level": $('#level').val(),
+                    "note": $('#note').val(),
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        alert(result.msg);
+                        window.location.href='/wx/inputTask';
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            });
+        });
+
+    });
+</script>
+<script src="js/jquery-weui.js" th:src="@{/js/jquery-weui.js}"></script>
+<script>
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+
+	.weui-navbar__item{
+		color: #3385cc;
+		font-weight: bold;
+	}
+	.weui-navbar__item.weui-bar__item--on {
+		background-color: #3385cc;
+		color: white;
+	}
+	.weui-panel__bd{
+		border-bottom: 1px solid #E6E6EA;
+	}
+	.iconfont{
+   		 	padding-right: 5px;
+    }
+	.overtime{
+   		 	color: #CE3C39;
+   	}
+   	.not-overtime{
+   		color: #04BE02;
+   	}
+	.weui-media-box__info {
+		color: #555555;
+	}
+	svg{
+		  width: 4em;
+		  height: 4em;
+		  float: right;
+		  margin-top: -80px;
+		  margin-right: 20px;
+	}

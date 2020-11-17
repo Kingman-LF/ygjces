@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xwkj.ygjces.Mapper.ApproverInfoMapper">
+    <resultMap id="BaseMap" type="com.xwkj.ygjces.model.ApproverInfo">
+        <id column="pid" property="pid"></id>
+        <result column="userId" property="userId"></result>
+    </resultMap>
+
+    <select id="selectCountApproverInfoByUserId" resultType="Integer">
+        SELECT count(1) FROM `tbl_gb_approver_info` WHERE userId = #{value}
+    </select>
+
+    <insert id="insertApprovalInfo" >
+        INSERT  INTO `tbl_gb_approver_info` (userId) VALUES (#{userId})
+    </insert>
+    
+    <delete id="removeApprovalInfo">
+        DELETE  FROM `tbl_gb_approver_info` WHERE userId = #{userId}
+    </delete>
+</mapper>

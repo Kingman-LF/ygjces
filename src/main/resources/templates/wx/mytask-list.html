@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>我的任务列表</title>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+<link rel="stylesheet" href="css/weui.min.css" th:href="@{/css/weui.min.css}">
+<link rel="stylesheet" href="css/jquery-weui.css"  th:href="@{/css/jquery-weui.css}">
+<link rel="stylesheet" href="css/demos.css"  th:href="@{/css/demos.css}">
+<link rel="stylesheet" href="css/iconfont.css"  th:href="@{/css/iconfont.css}">
+<script src="js/iconfont.js" th:src="@{/js/iconfont.js}"></script>
+<link rel="stylesheet" href="css/tasklist.css"  th:href="@{/css/tasklist.css}">
+ </head>
+  <body ontouchstart>
+    <div class="weui-tab">
+      <div class="weui-navbar">
+        <a class="weui-navbar__item weui-bar__item--on" href="#tab1">
+          	选择任务状态 ：
+        </a>
+        <div class="weui-cell__bd" style="color: #3385CC;">
+                        <select class="weui-select" name="status" id="status">
+                            <option value="">全部</option>
+                            <option value="1">待审批</option>
+                            <option value="2">审批通过</option>
+                            <option value="3">任务完成</option>
+                            <option value="4">任务结束</option>
+                            <option value="5">驳回</option>
+                            <option value="6">废弃</option>
+                        </select>
+		</div>
+      </div>
+      
+      
+      <div class="weui-tab__bd">
+        <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active">
+        	
+        	<div class="weui-panel">
+		        <div class="weui-panel__bd" th:each="taskInfo : ${list}">
+		          <div class="weui-media-box weui-media-box_text">
+                      <a th:href="@{'/wx/getMyTaskInfo?id='+${taskInfo.pid}}">
+                        <h4 class="weui-media-box__title" th:text="${taskInfo.taskDes}">
+                            检测报告方法标准问题整改
+                        </h4>
+                        <ul class="weui-media-box__info">
+                          <li class="weui-media-box__info__meta">来源：[[${taskInfo.source}]]</li>
+                          <li class="weui-media-box__info__meta">[[${#dates.format(taskInfo.createTime, 'yyyy-MM-dd HH:mm')}]]</li>
+                          <li class="weui-media-box__info__meta weui-media-box__info__meta_extra">责任：[[${taskInfo.deptName}]]</li>
+                        </ul>
+                      </a>
+		          </div>
+		        </div>
+        	</div>
+          
+        </div>
+      </div>
+    </div>
+	<script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+	<script src="js/fastclick.js" th:src="@{/js/fastclick.js}"></script>
+<script th:inline="javascript">
+  $(function() {
+    FastClick.attach(document.body);
+
+    var status = [[${status}]];
+    if(status != null){
+        $('#status').val(status);
+    }
+
+    $('#status').change(function () {
+        window.location.href='/wx/toMyTaskListPage?status='+$('#status').val();
+    });
+  });
+</script>
+	<script src="js/jquery-weui.js" th:src="@{/js/jquery-weui.js}" ></script>
+</body>
+</html>

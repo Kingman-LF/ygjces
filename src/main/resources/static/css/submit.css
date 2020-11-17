@@ -1,0 +1,89 @@
+
+   		 .iconfont{
+   		 	color: #3385cc;
+   		 	padding-right: 5px;
+   		 }
+   		 .weui-label{
+   		 	font-size: 14px;
+   		 	color: #555555;	
+   		 }
+   		 .weui-input{
+   		 	color: #555555;
+   		 }
+   		 .weui-select{
+   		 	color: #555555;
+   		 }
+   		 input::-webkit-input-placeholder{
+   		 	color: #C9C9C9;
+   		 }
+   		 .icon-source{
+   		 	margin-left: -5px;
+   		 	padding-right: 2px;
+   		 }
+   		.weui-label>p {
+			 display: -webkit-inline-box;
+			}
+		.weui-label>p>span>b{
+			font-weight: bold;
+		}
+		.weui-label>p>span:last-child{
+			flex: 1;
+		}
+		.weui-label>p>span:first-child{
+			width: 4em;
+			display: flex;
+			justify-content: space-between;
+		}
+		.weui-cell:before {
+			border-top: 1px solid transparent;
+		}
+		.weui-btn_primary {
+			background-color: #3385cc;
+		}
+		.weui-btn_primary:not(.weui-btn_disabled):active {
+			color: hsla(0,0%,100%,.6);
+			background-color: #3385cc;
+		}
+		.weui-cells:before{
+			border: none;
+		}
+		.weui-cells:after{
+			border: none;
+		}
+		.zdy-card{
+			width: 94%;
+			margin-left: 3%;
+			margin-top: -50px;
+			padding: 10px 0 15px 0;
+			border-radius: 10px;
+			box-shadow: 0 0 5px 0 #cccccc;
+			background: #FFFFFF;
+		}
+		.zdy-card-end{
+			margin-top: 20px;
+			width: 94%;
+			margin-left: 3%;
+			padding: 10px 0 15px 0;
+			border-radius: 10px;
+			box-shadow: 0 0 5px 0 #cccccc;
+			background: #FFFFFF;
+		}
+		.zdy-top{
+			width: 100%;
+			height:110px;
+			background: #3385CC;
+		}
+		.zdy-title{
+			color: #3385CC;
+			font-weight: bold;
+			font-size:18px;
+			text-align: center;
+			padding: 10px 0;
+		}
+		.item{
+			border-bottom: 1px dashed #999999;
+			padding: 10px 0;
+		}
+		.item:last-child{
+			border-bottom:none;
+		}

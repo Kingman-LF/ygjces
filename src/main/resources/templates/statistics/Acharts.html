@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.7.2/echarts.min.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+        .chart-box{
+            box-shadow: 0 0 5px 0 #e1e1e1;
+            height: 450px;
+            padding: 30px;
+            overflow-y: auto;
+            background-color: white;
+            margin-top:  20px;
+        }
+        #chartmain{
+            width: 100%;
+        }
+        .box-footer{
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            background-color: white;
+        }
+        .box-footer span{
+            padding: 0 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">统计</a>
+        <a>
+          <cite>委托公司费用统计</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so " style="margin-top: 20px">
+
+            <div class="layui-inline layui-show-xs-block">
+                <input class="layui-input" placeholder="开始日" name="monthTime_begin" id="start">
+            </div>
+            <div class="layui-inline layui-show-xs-block">
+                <input class="layui-input" placeholder="截止日" name="end" id="end">
+            </div>
+            <div class="layui-inline layui-show-xs-block">
+                <input type="text" name="wtUnitName" id="wtUnitName"  placeholder="请输入委托单位名称" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <select name="contrller" id="status">
+                    <option selected>全部</option>
+                    <option>已收费</option>
+                    <option>未收费</option>
+                </select>
+            </div>
+            <button class="layui-btn" id="search" ><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+        <div class="box-footer">
+            <span id="countWtSfMon">应收总额：<b>0元</b> </span><span id="countWtSfReal">已收总额：<b>0元</b> </span>
+        </div>
+        <div class="chart-box">
+            <div  id="chartmain" ref="chartmain" style="width:100%">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['laydate','form'], function(){
+        var laydate = layui.laydate;
+        var form = layui.form
+
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end' //指定元素
+        });
+
+    });
+</script>
+<script>
+    //    获取本月第一天
+    function formatDateTime(inputTime) {
+        var date = new Date(inputTime);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        return y + '-' + m + '-' + d;
+    };
+    //获取本月第一天零点零分零秒
+    var data=new Date();
+    data.setDate(1);
+    console.log(formatDateTime(data.getTime()));
+    $("[name='monthTime_begin']").val(formatDateTime(data.getTime()));
+    //    获取当天日期
+    var myDate = new Date;
+    $("[name='end']").val(formatDateTime(myDate.getTime()));
+</script>
+
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('chartmain'));
+function showchart(data){
+        //获取dom容器
+        var data = data?data:{startTime:$("#start").val(),
+            endTime:$("#end").val()}
+        $.ajax({
+            url:'getWtUnitAmount',
+            method:'post',
+            data:data,
+            success:function (res) {
+                // console.log(res)
+                if (res.success){
+                    $("#chartmain").css('height',(res.data[0].length*80)+80+'px');//动态设置图表高度
+                    if (res.data[0] == '') {
+                        layer.msg("没有委托单记录！",{icon:5,time:1500})
+                        // var index = layer.msg("当月没有委托单！",{icon:"2"})
+                        // layer.style(index, { width: '400px', height:'30px' });
+                    }
+                    var wtUnitName = [];
+                    var sfMon = [];
+                    var realMon = [];
+                    var sfRealMon= [];
+                    // console.log(res.data[0].length)
+                    for(var item in res.data[0]){
+                        // console.log(res.data[0][item].wtUnit)
+                        wtUnitName.push(res.data[0][item].wtUnit)
+                        sfMon.push(res.data[0][item].sfmon)
+                        realMon.push(res.data[0][item].realMoney)
+                        sfRealMon.push(res.data[0][item].sfRealMoney)
+                    }
+                    var option = {
+                        title: {
+                            text: '各委托单位',
+                            subtext: '数据统计'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        legend: {
+                            data: ['应收', '实收', '已收']
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            boundaryGap: [0, 0.01],
+                            position:'top'
+                        },
+                        yAxis: {
+                            axisLabel: {
+                                interval:0,
+                                rotate:0
+                            },
+                            // axisLabel:{
+                            //     formatter:function(e){
+                            //         console.log(e)
+                            //         var maxlength=5;
+                            //         if (e.length>maxlength) {
+                            //             var a = ''
+                            //             for(var i=0;i<=e.length;i++){
+                            //                 if(e[i]){
+                            //                     if(i%maxlength){
+                            //                         a+=e[i]
+                            //                     }else{
+                            //                         a+='\r\n'+e[i]
+                            //                     }
+                            //                 }
+                            //             }
+                            //             return a
+                            //         }else{
+                            //             return e;
+                            //         }
+                            //     }
+                            // },
+                            // axisLine: {lineStyle:{height:200}}, // y轴坐标轴线隐藏,注意不是y轴隐藏,我们还要显示文字的
+                            // axisTick: [{ show: false }], // y轴坐标轴刻度隐藏
+                            // type: 'category',
+                            data: wtUnitName
+                        },
+                        series: [
+                            {
+                                name: '应收',
+                                type: 'bar',
+                                barWidth: 20, //柱宽度
+                                barMaxWidth:80, //最大柱宽度
+                                data: sfMon
+                            },
+                            {
+                                name: '实收',
+                                type: 'bar',
+                                barWidth: 20, //柱宽度
+                                barMaxWidth:100, //最大柱宽度
+                                data: realMon
+                            },
+                            {
+                                name: '已收',
+                                type: 'bar',
+                                barWidth: 20, //柱宽度
+                                barMaxWidth:100, //最大柱宽度
+                                barHeight: '30',
+                                data: sfRealMon
+                            }
+                        ]
+                    }
+                    myChart.setOption(option,true)
+                    $("#countWtSfMon").html("应收总额："+res.data[1]+"元")
+                    $("#countWtSfReal").html("已收总额："+res.data[2]+"元")
+                    myChart.resize()
+                } else{
+                    layer.msg("加载数据失败！",{icon:"2"})
+                }
+            }
+        })
+
+
+}
+
+    showchart();   //图表执行
+
+    $("#search").on('click',function (event) {
+        event.preventDefault();
+        var data = {
+            wtUnit:$("#wtUnitName").val(),
+            sfStatus:$("#status").val(),
+            startTime:$("#start").val(),
+            endTime:$("#end").val()
+        }
+        showchart(data)
+        // $.ajax({
+        //     url:'getWtUnitAmount',
+        //     method:'post',
+        //     data:{
+        //         gcName:$("#gcName").val(),
+        //         sfStatus:$("#status").val(),
+        //         startTime:$("#start").val(),
+        //         endTime:$("#end").val()
+        //     },
+        //     success:function (res) {
+        //         console.log(res)
+        //         if (res.success){
+        //             $("#chartmain").css('height',res.data[0].length*80+'px');//动态设置图表高度
+        //             var myChart = echarts.init(document.getElementById('chartmain'));
+        //             if (res.data[0] == '') {
+        //                 layer.msg("没有委托单！",{icon:5,time:1500})
+        //                 // var index = layer.msg("当月没有委托单！",{icon:"2"})
+        //                 // layer.style(index, { width: '400px', height:'30px' });
+        //             }
+        //             var wtUnitName = [];
+        //             var sfMon = [];
+        //             var realMon = [];
+        //             var sfRealMon= [];
+        //             // console.log(res.data[0].length)
+        //             for(var item in res.data[0]){
+        //                 // console.log(res.data[0][item].wtUnit)
+        //                 wtUnitName.push(res.data[0][item].wtUnit)
+        //                 sfMon.push(res.data[0][item].sfmon)
+        //                 realMon.push(res.data[0][item].realMoney)
+        //                 sfRealMon.push(res.data[0][item].sfRealMoney)
+        //             }
+        //             var option = {
+        //                 title: {
+        //                     text: '各委托单位',
+        //                     subtext: '数据统计'
+        //                 },
+        //                 tooltip: {
+        //                     trigger: 'axis',
+        //                     axisPointer: {
+        //                         type: 'shadow'
+        //                     }
+        //                 },
+        //                 legend: {
+        //                     data: ['应收', '实收', '已收']
+        //                 },
+        //                 grid: {
+        //                     left: '3%',
+        //                     right: '4%',
+        //                     bottom: '3%',
+        //                     containLabel: true
+        //                 },
+        //                 xAxis: {
+        //                     type: 'value',
+        //                     boundaryGap: [0, 0.01],
+        //                     position:'top'
+        //                 },
+        //                 yAxis: {
+        //                     axisLabel: {
+        //                         interval:0,
+        //                         rotate:0
+        //                     },
+        //                     // axisLine: { show: false }, // y轴坐标轴线隐藏,注意不是y轴隐藏,我们还要显示文字的
+        //                     // axisTick: [{ show: false }], // y轴坐标轴刻度隐藏
+        //                     // type: 'category',
+        //                     data: wtUnitName
+        //                 },
+        //                 series: [
+        //                     {
+        //                         name: '应收',
+        //                         type: 'bar',
+        //                         barWidth: 20, //柱宽度
+        //                         barMaxWidth:80, //最大柱宽度
+        //                         data: sfMon
+        //                     },
+        //                     {
+        //                         name: '实收',
+        //                         type: 'bar',
+        //                         barWidth: 20, //柱宽度
+        //                         barMaxWidth:100, //最大柱宽度
+        //                         data: realMon
+        //                     },
+        //                     {
+        //                         name: '已收',
+        //                         type: 'bar',
+        //                         barWidth: 20, //柱宽度
+        //                         barMaxWidth:100, //最大柱宽度
+        //                         barHeight: '30',
+        //                         data: sfRealMon
+        //                     }
+        //                 ]
+        //             }
+        //             myChart.setOption(option)
+        //             $("#countWtSfMon").html("应收总额："+res.data[1])
+        //             $("#countWtSfReal").html("已收总额："+res.data[2])
+        //         } else{
+        //             layer.msg("加载数据失败！",{icon:"2"})
+        //         }
+        //     }
+        // })
+
+    })
+
+
+
+
+
+
+</script>
+
+</body>
+
+</html>

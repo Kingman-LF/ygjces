@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+      <link rel="stylesheet" href="./css/eleTree.css">
+      <link rel="stylesheet" href="./css/zTreeStyle.css">
+    <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+      <script src="./js/jquery.min.js"></script>
+      <script src="./js/jquery.ztree.all.min.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <form action="" method="post" class="layui-form layui-form-pane">
+                <div class="layui-form-item">
+                    <label for="name" class="layui-form-label">
+                        <span class="x-red">*</span>角色名
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="name" name="name" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">
+                        拥有权限
+                    </label>
+                    <div class="layui-input-block">
+                        <div class="ztree" id="tree"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label for="desc" class="layui-form-label">
+                        描述
+                    </label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" id="desc" name="desc" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                <button class="layui-btn" id="permAddBtn" type="button" lay-filter="add">增加</button>
+              </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        layui.use(['layer','form'], function() {
+            var $ = layui.$,
+            form = layui.form,
+                layer = layui.layer;
+          var setting = {
+              async: {
+                  enable: true,
+                  url: "selectPermissionInfoList",
+                  type:"post",
+                  dataType : 'json',
+                  contentType : 'application/json;charset=utf-8',
+                  dataFilter: function (treeId, parentNode, responseData) {
+//                      console.log(responseData.data)
+                      return responseData.data;
+                  },
+//                  autoParam:["id"]
+              },
+              check: {
+                  enable: true,
+              },
+              data: {
+                  key:{
+                      name:"permName"
+                  },
+                  simpleData: {
+                      enable: true,
+                      idKey: "id",
+                      pIdKey:"fid",
+                      rootPId: 0
+                  }
+              }
+          }
+            $(document).ready(function () {
+                $.fn.zTree.init($("#tree"), setting);
+            })
+
+
+
+            $("#permAddBtn").on("click", function(){
+                var name = $("#name").val();
+                var desc = $("#desc").val();
+                var zTreeObj = $.fn.zTree.getZTreeObj("tree");  //ztree的Id  zTreeId
+                //获取复选框/单选框选中的节点：
+                var checkedNodes = zTreeObj.getCheckedNodes();
+                //权限表主键
+                var permIds =[];
+                for(var i = 0;i<checkedNodes.length;i++){
+                    permIds.push(checkedNodes[i].id)
+                }
+                if(name == undefined || name == null || name == ''){
+                    layer.msg("角色名称必填");
+                    return ;
+                }
+                var loading = layer.load(2);
+                $.ajax({
+                    url : 'addRoleInfo',
+                    type : 'post',
+                    data : JSON.stringify({roleName:name, note:desc,permIds:permIds}),
+                    dataType : 'json',
+                    contentType : 'application/json;charset=utf-8',
+                    complete : function(){
+                        layer.close(loading);
+                    },
+                    success : function(result){
+                        if(result.code == 2){
+                            layer.msg("添加失败!",{icon:2});
+                            return;
+                        }
+                        //刷新父级数据表格
+                        parent.layui.table.reload("roleTableId");
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+                        parent.layer.msg("添加成功!", {time: 1000,icon:1});
+                    }
+                })
+            })
+        })
+//        layui.config({
+//            base: "lib/layui/lay/modules/"        //eleTree.js所在目录
+//        }).use(['form','layer','eleTree'], function(){
+//            $ = layui.jquery;
+//          var form = layui.form
+//          ,layer = layui.layer,
+//              eleTree = layui.eleTree;
+//
+//            var permTree = eleTree.render({
+//                elem : '.tree-perm',
+//                url : 'showPermissionInfoList',
+//                method : 'post',
+//                showCheckbox : true,
+//                defaultExpandAll : true,
+//                response: { //对后台返回的数据格式重新定义
+//                    statusName: "code",
+//                    statusCode: 1,
+//                    dataName: "data"
+//                },
+//                done: function(res) { //数据请求完成的回调函数，只有异步请求才会有
+//                    // res即为你接口返回的信息。
+//                    console.log(res);
+//                }
+//            })
+//
+//
+//
+//        $("#permAddBtn").on("click", function(){
+//            var name = $("#name").val();
+//            var desc = $("#desc").val();
+//            var perm = permTree.getChecked(false, true);
+//            if(name == undefined || name == null || name == ''){
+//                layer.msg("角色名称必填");
+//                return ;
+//            }
+//            var perms = [];
+//            for(var index in perm){
+//                var p = {};
+//                p.id = perm[index].id;
+//                perms.push(p);
+//            }
+//            var loading = layer.load(2);
+//            $.ajax({
+//                url : 'addRoleInfo',
+//                type : 'post',
+//                data : JSON.stringify({roleName:name, note:desc, permissions:perms}),
+//                dataType : 'json',
+//                contentType : 'application/json;charset=utf-8',
+//                complete : function(){
+//                  layer.close(loading);
+//                },
+//                success : function(result){
+//                    if(result.code == 0){
+//                        layer.msg(result.msg);
+//                        return;
+//                    }
+//                    layer.msg(result.msg);
+//                    xadmin.father_reload();
+//                    xadmin.close();
+//                }
+//            })
+//        })
+//
+//
+//        });
+    </script>
+    <script>var _hmt = _hmt || []; (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();</script>
+  </body>
+
+</html>

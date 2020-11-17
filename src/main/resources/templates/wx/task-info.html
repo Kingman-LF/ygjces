@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>完成任务</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+    ">
+	<link rel="stylesheet" href="css/weui.min.css" th:href="@{/css/weui.min.css}">
+	<link rel="stylesheet" href="css/jquery-weui.css"  th:href="@{/css/jquery-weui.css}">
+	<link rel="stylesheet" href="css/demos.css"  th:href="@{/css/demos.css}">
+	<link rel="stylesheet" href="css/iconfont.css"  th:href="@{/css/iconfont.css}">
+	<link rel="stylesheet" href="css/submit.css" th:href="@{/css/submit.css}">
+  	<style>
+  		.weui-cell__bd{
+  			font-size: 14px !important;
+  		}
+  	</style>
+</head>
+<body ontouchstart>
+<div class="zdy-top">
+	
+</div>
+<div class="zdy-card">
+	<div class="weui-cells weui-cells_form" style="margin-top: 0;">
+		<div class="zdy-title">任务详情</div>
+		<input type="hidden" id="pid" name="pid" th:value="${taskInfo.pid}">
+		<input type="hidden" id="actualEndDate" name="actualEndDate" th:value="${#dates.format(taskInfo.actualEndDate, 'yyyy-MM-dd')}">
+		<input type="hidden" id="firstDate" name="firstDate" th:value="${taskInfo.firstDate}">
+		<input type="hidden" id="overDate" name="overDate" th:value="${taskInfo.overDate}">
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        		<span class="iconfont icon-renwu-"></span>
+	        		<p><span><b>任</b><b>务</b><b>内</b><b>容</b></span></p>
+	        	</label>
+	        </div>
+	        <div class="weui-cell__bd"  th:text="${taskInfo.taskDes}">
+	           	检测报告方法标准问题整改
+	        </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	            <label class="weui-label">
+	            	<span class="iconfont icon-source"></span>
+	            	<p><span><b>任</b><b>务</b><b>来</b><b>源</b></span></p>
+	            </label>
+	        </div>
+	        <div class="weui-cell__bd"   th:text="${taskInfo.source}">
+	            	公司
+	        </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        	<span class="iconfont icon-riqi"></span>
+	        	<p><span><b>任</b><b>务</b><b>节</b><b>点</b></span></p>
+	        	</label>
+	        </div>
+	        <div class="weui-cell__bd" th:text="${#dates.format(taskInfo.endDate, 'yyyy-MM-dd')}">
+	            2012-12-12
+	        </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        		<span class="iconfont icon-bumen"></span>
+	        		<p><span><b>责</b><b>任</b><b>部</b><b>门</b></span></p>
+	        	</label>
+	        </div>
+	         <div class="weui-cell__bd" th:text="${taskInfo.deptName}">
+	          	部门
+	        </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        		<span class="iconfont icon-zhongyaodengji"></span>
+	        		<p><span><b>等</b><b>级</b></span></p>
+	        	</label>
+	        </div>
+	        <div class="weui-cell__bd" th:text="${taskInfo.levelName}">
+	          	 一级
+	        </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        		<span class="iconfont icon-beizhu-"></span>
+	        		<p><span><b>备</b><b>注</b></span></p>
+	        	</label>
+	        </div>
+	        <div class="weui-cell__bd" th:text="${taskInfo.note}">
+	         		   啦啦啦啦
+	        </div>
+	    </div>
+	</div>
+</div>
+
+
+
+<div class="zdy-card-end">
+	<div class="weui-cells weui-cells_form" style="margin-top: 0;">
+		<div class="zdy-title">完成情况</div>
+	     <div class="weui-cell">
+		    <div class="weui-uploader__bd">
+		    	<ul class="weui-uploader__files" id="uploaderFiles">
+	                <img class="weui-uploader__file" th:src="@{/images/pic_160.png}" id="pic"></img>
+              		<div class="weui-uploader__input-box">
+	                	<input id="uploaderInput" class="weui-uploader__input" type="file" accept="" multiple="">
+	              	</div>
+		    	</ul>
+	              
+	         </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__bd">
+	         		<textarea style="width: 100%;" rows="6" placeholder="请输入完成情况" id="reason"></textarea>
+	        </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        		<span class="iconfont icon-shijian"></span>
+	        		<p><span><b>提</b><b>交</b><b>时</b><b>间</b></span></p>
+	        	</label>
+	        </div>
+	        <div class="weui-cell__bd" th:text="${#dates.format(taskInfo.actualEndDate, 'yyyy-MM-dd')}">
+	         		   2018-12-12
+	        </div>
+	    </div>
+	     <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        		<span class="iconfont icon-ren"></span>
+	        		<p><span><b>提</b><b>交</b><b>人</b></span></p>
+	        	</label>
+	        </div>
+	        <div class="weui-cell__bd" th:text="${taskInfo.userName}">
+	         		   张三
+	        </div>
+	    </div>
+	    <div class="weui-cell">
+	        <div class="weui-cell__hd">
+	        	<label class="weui-label">
+	        		<span class="iconfont icon-meijieguo"></span>
+	        		<p><span><b>情</b><b>况</b></span></p>
+	        	</label>
+	        </div>
+	        <div class="weui-cell__bd" th:if="${taskInfo.firstDate != null}">
+				提前完成（[[${taskInfo.firstDate}]]天）
+	        </div>
+			<div class="weui-cell__bd" th:if="${taskInfo.overDate != null}">
+				超期完成（[[${taskInfo.overDate}]]天）
+			</div>
+	    </div>
+	</div>
+</div>
+<div class="weui-btn-area" th:if="${taskInfo.isLeader == 1}">
+	    <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips">完成</a>
+</div>
+
+
+<script src="js/jquery-2.1.4.js" th:src="@{/js/jquery-2.1.4.js}"></script>
+<script src="js/fastclick.js" th:src="@{/js/fastclick.js}"></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+        var formData = new FormData();
+        $('#uploaderInput').change(function (e) {
+
+            formData = new FormData();
+            formData.append("file",e.target.files[0]);
+            if (e.target.files[0] != null){
+                $.ajax({
+                    url : 'echoPicture',
+                    type : 'post',
+                    contentType: false,
+                    processData: false,
+                    data :formData,
+                    dataType: 'json',
+                    success : function(result) {
+                        if (result.success) {
+                            var path = result.data;
+                            $('#pic').attr('src','/temporary/'+path);
+                            console.log(result.msg);
+                        } else {
+                            console.log(result.msg);
+                        }
+                    }
+                });
+            }
+
+
+
+
+
+        });
+        $("#showTooltips").click(function() {
+
+            formData.append("pid",$('#pid').val());
+            formData.append("actualEndDate",$('#actualEndDate').val());
+            formData.append("reason",$('#reason').val());
+            if($('#firstDate').val()!=null && $('#firstDate').val() !=''){
+                formData.append("firstDate",$('#firstDate').val());
+			}
+            if($('#overDate').val()!=null && $('#overDate').val() !=''){
+                formData.append("overDate",$('#overDate').val());
+            }
+            $.ajax({
+                url : 'completeTask',
+                type : 'post',
+                contentType: false,
+                processData: false,
+                data :formData,
+                dataType: 'json',
+                success : function(result) {
+                    if (result.success) {
+                        alert(result.msg);
+                        window.location.href='/wx/toCompleteTaskPage';
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            });
+        });
+    });
+</script>
+<script src="js/jquery-weui.js" th:src="@{/js/jquery-weui.js}"></script>
+
+
+<script>
+
+</script>
+</body>
+</html>

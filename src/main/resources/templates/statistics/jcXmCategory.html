@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>layuiAdmin 角色管理 iframe 框</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet"  th:href="@{/lib/layui/css/layui.css}">
+  <link rel="stylesheet" media="all" th:href="@{/css/metroStyle.css}">
+  <script type="text/javascript" th:src="@{/js/fast-helper.js}"></script>
+  <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+  <script type="text/javascript" th:src="@{/js/jquery.ztree.all.min.js}"></script>
+</head>
+<body>
+  <!--<input id="uId" type="hidden" name="uId">-->
+  <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">检测项树</label>
+        <div class="layui-input-block">
+				<ul id="menuTree" class="ztree"></ul>
+			</div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <button class="layui-btn" lay-submit lay-filter="LAY-user-role-submit" id="LAY-user-role-submit">提交</button>
+    </div>
+  </div>
+
+  <script  th:src="@{/lib/layui/layui.js}"></script>
+  <script>
+    function getData(params) {
+        layui.use(['form','jquery'], function(){
+            var $ = layui.$
+                ,form = layui.form ;
+//    var setting = {
+//			data : {
+//				simpleData : {
+//					enable : true,
+//					rootPId : 0
+//				}
+//			},
+//			check : {
+//				enable : true,
+//                chkboxType : { "Y": "", "N": ""}
+//				// nocheckInherit : true
+//			}
+//		};
+
+            var setting = {
+//                async: {
+//                    enable: true,
+//                    url: "getJcXmCategory",
+//                    type: "post",
+//                    dataType: 'json',
+//                    contentType: 'application/json;charset=utf-8',
+//                    dataFilter: function (treeId, parentNode, responseData) {
+//                        //                      console.log(responseData.data)
+//                        return responseData.data;
+//                    },
+//                    //                  autoParam:["id"]
+//                },
+                check: {
+                    enable: true,
+                },
+                data: {
+                    key: {
+                        name: "categoryName"
+                    },
+                    simpleData: {
+                        enable: true,
+                        idKey: "categoryId",
+                        pIdKey: "pid",
+                        rootPId: 0
+                    }
+                }
+            }
+            $(document).ready(function () {
+//                $.fn.zTree.init($("#menuTree"), setting);
+                //ajax请求重新加载树
+                console.log(params.id)
+                $.ajax({
+                    url:"reloadJcXmZtree",
+                    method:"post",
+                    data:{id:params.id},
+                    success:function (result) {
+                        ztree = $.fn.zTree.init($("#menuTree"), setting,result.data);
+                        ztree.expandAll(true);
+                    }
+                })
+            })
+
+//		$.ajax({
+//			url : 'getOrganziationInfoList',
+//			type : 'post',
+//            dataType: 'json',
+//			async : 'false',
+//			success : function(result) {
+//				if (result.success) {
+//					ztree = $.fn.zTree.init($("#menuTree"),
+//							setting, result.data);
+//					//展开所有节点
+//					ztree.expandAll(true);
+//					$.ajax({
+//                        url : 'getOrganizationInfoByUid',
+//                        type : 'post',
+//                        data : 'id='+$('#uId').val(),
+//                        dataType: 'json',
+//                        success : function (data) {
+//                            var zTreeOjb = $.fn.zTree.getZTreeObj("menuTree");
+//                            var list = data.data;
+//                            for(var j=0;j<list.length;j++){
+//                                	var node = zTreeOjb.getNodeByParam("id",list[j].id);
+//                                	node.checked = true;
+//                                	zTreeOjb.updateNode(node);
+//                                }
+//                                form.render();
+//                        }
+//                    });
+//
+//				} else {
+//					alert(result.message);
+//				}
+//			}
+//		})
+//
+       form.on('submit(LAY-user-role-submit)', function(data){
+           var zTreeObj = $.fn.zTree.getZTreeObj("menuTree");  //ztree的Id  zTreeId
+//            //获取复选框/单选框选中的节点：
+           var checkedNodes = zTreeObj.getCheckedNodes()
+//            //权限表主键
+           var permIds = "";
+           var permName = "";
+           for(var i = 0;i<checkedNodes.length;i++){
+               if(i < checkedNodes.length-1){
+                   permIds+=(checkedNodes[i].categoryId)+","
+                   permName += checkedNodes[i].categoryName+","
+               }else{
+                   permIds+=(checkedNodes[i].categoryId)
+                   permName += checkedNodes[i].categoryName
+               }
+           }
+//           console.log(permIds)
+//           console.log(permName)
+//           console.log(params.id)
+
+//           var checkStatus = layui.table.checkStatus('orgTable').data;
+//           var checkedIds = ""
+//           for(var i =0;i<checkStatus.length;i++){
+//               if(i < checkStatus.length-1){
+//                   checkedIds+=(checkStatus[i].id)+","
+//               }else{
+//                   checkedIds+=(checkStatus[i].id)
+//               }
+////                console.log(checkStatus[i].id)
+//           }
+           $.ajax({
+               url:"bindJcXmWithApprovePerson",
+               method:"post",
+               data:{permIds:permIds,permName:permName,checkedIds:params.id},
+               success:function (data) {
+                   if(data.code == "1"){
+//                       layer.msg("修改成功!")
+                       var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                       parent.layer.close(index); //再执行关闭
+                       parent.layer.msg("修改成功!", {time: 1000,icon:1});
+                       return
+                   }
+                   layer.msg(data.msg)
+                   var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                   parent.layer.close(index); //再执行关闭
+               },
+           error:function () {
+               layer.msg('请求失败!')
+           }
+       })
+       });
+
+        });
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xwkj.ygjces.Mapper.ExigencyInfoMapper" >
+    <resultMap id="BaseMap" type="com.xwkj.ygjces.model.ExigencyInfo">
+        <id column="pid" property="pid"></id>
+        <result column="ex_name" property="exName"></result>
+        <result column="level" property="level"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="create_userId" property="createUserId"></result>
+        <result column="last_modified_time" property="lastModifiedTime"></result>
+        <result column="last_modifier" property="lastModifier"></result>
+        <result column="is_enable" property="isEnable"></result>
+    </resultMap>
+    
+    <select id="getExigencyInfoList" resultMap="BaseMap">
+        SELECT pid,ex_name,level,is_enable FROM `tbl_gb_exigency_info`
+        <where>
+            <if test="exName!=null and exName != ''">
+                AND ex_name like CONCAT (CONCAT('%' , #{exName}) , '%')
+            </if>
+            <if test="isEnable != null ">
+                and is_enable = #{isEnable}
+            </if>
+            <!--<if test="isEnable == null">
+                and is_enable = 1
+            </if>-->
+        </where>
+        order by level
+    </select>
+
+    <update id="updateExigency">
+        UPDATE `tbl_gb_exigency_info` SET is_enable = #{isEnable},last_modified_time = #{lastModifiedTime},last_modifier=#{lastModifier} where pid = #{pid}
+    </update>
+    
+    <select id="selectCountExigencyInfoByLevel" resultType="Integer">
+        select count(1) FROM `tbl_gb_exigency_info` WHERE level = #{level}
+    </select>
+    
+    <insert id="insertExigencyInfo">
+        insert into `tbl_gb_exigency_info`(ex_name,level,create_time,create_userId,is_enable) VALUES (#{exName},#{level},#{createTime},#{createUserId},#{isEnable})
+    </insert>
+
+    <update id="updateAddLevelByCurrLevel" >
+        UPDATE `tbl_gb_exigency_info` SET level = level+1,last_modifier = #{lastModifier},last_modified_time = #{lastModifiedTime} where level >= #{level}
+    </update>
+
+    <select id="getExigencyInfoByLevel" resultMap="BaseMap">
+        SELECT *
+        FROM tbl_gb_exigency_info
+        WHERE level = #{level}
+    </select>
+</mapper>

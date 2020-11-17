@@ -1,0 +1,253 @@
+<!--添加人员弹出层-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>组织机构管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="./css/font.css" th:href="@{/css/font.css}">
+    <link rel="stylesheet" href="./css/xadmin.css" th:href="@{/css/xadmin.css}">
+    <script src="./lib/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js" th:src="@{/js/xadmin.js}"></script>
+    <script type="text/javascript" src="./comment/messageAlert.js" th:src="@{/comment/messageAlert.js}"></script>
+    <link rel="stylesheet" href="./css/metroStyle.css" th:href="@{/css/metroStyle.css}">
+    <script src="./js/jquery.ztree.all.min.js" th:src="@{/js/jquery.ztree.all.min.js}"></script>
+    <!--<script type="text/javascript"  th:src="@{/js/officemna.js}"></script>-->
+
+    <style>
+        .layui-input, .layui-textarea {
+            display: block;
+            padding-left: 10px;
+            border: none;
+            outline: none
+        }
+    </style>
+</head>
+<script th:inline="javascript">
+    //全局变量，拿到该页面所有的权限
+    var parameter = [[${parameter}]];
+</script>
+<body class="layui-anim layui-anim-up">
+
+<div class="x-nav">
+                <span class="layui-breadcrumb">
+                  <a href="">首页</a>
+                  <a href="">检测项管理</a>
+                  <a>
+                     <cite>批准人绑定检测项</cite>
+                  </a>
+                </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i>
+    </a>
+</div>
+<!--<div class="layui-inline" style="margin-left: 20px;">-->
+    <!--<button class="layui-btn selectUser" id="bind">绑定</button>-->
+<!--</div>-->
+<br>
+<div class="layui-row" style="margin-top: 20px">
+    <!--<div class="layui-col-md2">-->
+        <!--&lt;!&ndash;科室管理&ndash;&gt;-->
+        <!--<ul id="officemna" class="ztree"></ul>-->
+    <!--</div>-->
+    <div class="layui-col-md10" >
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">人员名称</label>
+                <div class="layui-input-block ">
+                    <input class="layui-input" type="text" name="tName" id="tName" placeholder="请输入真实姓名">
+                </div>
+            </div>
+            <div class="layui-inline" style="margin-left: 20px;">
+                <button class="layui-btn selectUser">立即查找</button>
+            </div>
+        </div>
+        <div class="layui-card">
+            <div class="layui-card-body ">
+                <table class="layui-hide" id="orgTable" lay-filter="orgTable"></table>
+                <script type="text/html" id="orgTable-manage">
+                    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit">编辑</a>
+                    <!--{{#  if(d.isLeader == 1){ }}
+                    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="remove_leader">取消领导</a>
+                    {{#  } else if(d.isLeader == 0){ }}
+                    <a class="layui-btn layui-btn-xs" lay-event="leader">设置领导</a>
+                    {{#  } }}
+-->
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['layer', 'table', 'form'], function () {
+        var $ = layui.$,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer;
+
+        var setting = {
+            async: {
+                enable: true,
+                url: "getJcXmCategory",
+                type: "post",
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                dataFilter: function (treeId, parentNode, responseData) {
+                    //                      console.log(responseData.data)
+                    return responseData.data;
+                },
+                //                  autoParam:["id"]
+            },
+            check: {
+                enable: true,
+            },
+            data: {
+                key: {
+                    name: "categoryName"
+                },
+                simpleData: {
+                    enable: true,
+                    idKey: "categoryId",
+                    pIdKey: "pid",
+                    rootPId: 0
+                }
+            }
+        }
+//        $(document).ready(function () {
+//            $.fn.zTree.init($("#officemna"), setting);
+//        })
+
+        //第一个实例
+        var tableIns = table.render({
+            elem: '#orgTable'
+            , id: 'orgTable'
+            , method: 'post'
+            , url: 'showUserInfoList' //数据接口
+            , where: {
+                enable: 1
+            }
+            , page: true //开启分页
+            , loading: true
+            , even: false//不开启隔行背景
+            , response: {
+                statusCode: 1
+            }
+            , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.list //解析数据列表
+                };
+            }
+            , cols: [
+                [ //表头
+//                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'}
+                    , {field: 'trueName', title: '真实姓名'}
+                    , {title: '操作', align: 'center', fixed: 'right', toolbar: '#orgTable-manage'}
+                ]
+            ]
+            , text: {
+                none: '无人员！'
+            }
+        });
+
+        $('.selectUser').on('click', function () {
+            tableIns.reload({
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    trueName: $("#tName").val(),
+                }
+            });
+        });
+
+        table.on('tool(orgTable)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'edit') {
+                // alert("edit");
+                layer.open({
+                    type: 2,
+                    title: "编辑",
+                    content: 'toJcXmCategoryPage' //弹窗路径
+                    , area: ['600px', '400px']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-role-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        submit.trigger('click');
+                    }
+                    , success: function (layero, index) {
+//                        var body = layer.getChildFrame('body', index);
+//                        body.find("#uId").val(data.id);
+                        var iframeWin = window[layero.find('iframe')[0]['name']];
+                        iframeWin.getData(data)
+
+                    }
+                });
+            }
+        });
+
+//        $("#bind").on('click', function () {
+//            var zTreeObj = $.fn.zTree.getZTreeObj("officemna");  //ztree的Id  zTreeId
+////            //获取复选框/单选框选中的节点：
+//            var checkedNodes = zTreeObj.getCheckedNodes()
+////            //权限表主键
+//            var permIds = "";
+//            var permName = "";
+//            for(var i = 0;i<checkedNodes.length;i++){
+//                if(i < checkedNodes.length-1){
+//                    permIds+=(checkedNodes[i].categoryId)+","
+//                    permName += checkedNodes[i].categoryName+","
+//                }else{
+//                    permIds+=(checkedNodes[i].categoryId)
+//                    permName += checkedNodes[i].categoryName
+//                }
+//            }
+//            console.log(checkedNodes)
+//
+//            var checkStatus = layui.table.checkStatus('orgTable').data;
+//            var checkedIds = ""
+//            for(var i =0;i<checkStatus.length;i++){
+//                if(i < checkStatus.length-1){
+//                    checkedIds+=(checkStatus[i].id)+","
+//                }else{
+//                    checkedIds+=(checkStatus[i].id)
+//                }
+////                console.log(checkStatus[i].id)
+//            }
+////            console.log(checkStatus)
+//            //发送AJAX请求绑定
+////            console.log(permIds)
+////            console.log(checkedIds)
+//            $.ajax({
+//                url:"bindJcXmWithApprovePerson",
+//                method:"post",
+//                data:{permIds:permIds,permName:permName,checkedIds:checkedIds,childPage:0},
+//                success:function (data) {
+//                    if(data.code == 1){
+//                        layer.msg(data.msg,{time:1000,icon:1})
+//                    }
+//                    layer.msg(data.msg,{time:1000,icon:7})
+//                },
+//                error:function () {
+//                    layer.msg('请求失败!')
+//                }
+//            })
+//        })
+    })
+
+
+</script>
+</body>
+</html>
